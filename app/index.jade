@@ -4,7 +4,7 @@ html(lang="en-US")
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
     meta(name="viewport", content="width=device-width, initial-scale=1")
-    title My Title
+    title the social circle
     link(rel="stylesheet" href="vendor/skeleton/css/normalize.css")
     link(rel="stylesheet" href="vendor/skeleton/css/skeleton.css")
     link(rel="stylesheet" href="css/main.css")
@@ -14,9 +14,15 @@ html(lang="en-US")
       
     header
       img(src="img/thesocialcircle.png", alt="Logo", title="The Social Circle")
-    .map-container
-      h1 Hello World
+    .container
+      .map-container
+        .map-canvas#map-canvas
+        .topleft-container
+        .topright-container
+        .bottomleft-container
+        .bottomright-container
 
     script(src="vendor/lodash/lodash.min.js")
     script(src="vendor/jquery/dist/jquery.min.js")
+    script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2qt90yavxyrmR6Ff61nUniGmLMi51AlY")
     script(src="js/main.js")
