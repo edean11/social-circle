@@ -16,7 +16,7 @@
 			img {
 				position: absolute;
 				left: 0;
-				width: 12%;
+				width: 13%;
 				padding: 10px;
 			}
 		}
@@ -28,7 +28,7 @@
 			img {
 				position: absolute;
 				right: 0;
-				width: 12%;
+				width: 10%;
 				padding: 10px;
 			}
 		}
@@ -36,11 +36,26 @@
 			display: inline-block;
 			width: 49%;
 			height: 50%;
+
+			img {
+				position: absolute;
+				width: 9%;
+				margin-top: 33%;
+				padding: 10px;
+			}
 		}
 		.bottomright-container {
 			display: inline-block;
 			width: 49%;
 			height: 50%;
+
+			img {
+				position: absolute;
+				right: 0;
+				width: 13%;
+				margin-top: 33%;
+				padding: 10px;
+			}
 		}
 
 		.map-canvas {
