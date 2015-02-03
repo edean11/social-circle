@@ -7,6 +7,7 @@ html(lang="en-US")
     title the social circle
     link(rel="stylesheet" href="vendor/skeleton/css/normalize.css")
     link(rel="stylesheet" href="vendor/skeleton/css/skeleton.css")
+    link(rel="stylesheet" href="vendor/jquery/jquery.datetimepicker.css")
     link(rel="stylesheet" href="css/main.css")
 
   body
@@ -16,19 +17,46 @@ html(lang="en-US")
       img(src="img/thesocialcircle.png", alt="Logo", title="The Social Circle")
     .container
       .map-container
-        .set-container
+        .editOverlay
+          .castMessageOverlay
+            label(for="castTitle") Title
+            input(type="text")#castTitle
+            label(for="castMessage") Message
+            textarea(maxlength="100")#castMessageText
+            label(for="datetimepicker") Expiration Date
+            input(type="text")#datetimepicker
+            label(for="castAttachment") Attachment
+            input(type="file")#castAttachment
+            .groupSelect
+              h6 Cast Message to...
+              label Group
+                input(type="checkbox" label="Example Group")
+              label Group
+                input(type="checkbox" label="Example Group")
+              label Group
+                input(type="checkbox" label="Example Group")
+              label Group
+                input(type="checkbox" label="Example Group")
+              label Group
+                input(type="checkbox" label="Example Group")
+              label Group
+                input(type="checkbox" label="Example Group")
+          .searchOverlay
+          .notificationsOverlay
+          .settingsOverlay
         .map-canvas#map-canvas
         .topleft-container
-          img(src="img/cast.png" alt="Cast" title="Cast Message")#castMessage
+          img(src="img/cast.png" alt="Cast" title="Cast Message")#castMessageButton
         .topright-container
-          img(src="img/search.png" alt="Search" title="Search Circles")#search
+          img(src="img/search.png" alt="Search" title="Search Circles")#searchButton
         .bottomleft-container
-          img(src="img/notifications.png" alt="Notifications" title="Notifications")#notifications
+          img(src="img/notifications.png" alt="Notifications" title="Notifications")#notificationsButton
         .bottomright-container
-          img(src="img/settings.png" alt="Settings" title="Settings")#settings
+          img(src="img/settings.png" alt="Settings" title="Settings")#settingsButton
       .footer-container
 
     script(src="vendor/lodash/lodash.min.js")
     script(src="vendor/jquery/dist/jquery.min.js")
+    script(src="vendor/jquery/jquery.datetimepicker.js")
     script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2qt90yavxyrmR6Ff61nUniGmLMi51AlY")
     script(src="js/main.js")

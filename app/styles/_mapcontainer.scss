@@ -8,16 +8,45 @@
 		height: 70%;
 		border: 1px solid lightgrey;
 
-		.set-container {
+		.editOverlay {
+			width: 100%;
+    		position: absolute;
+    		background-color: black;
+    		height: 0;
+    		transition: height 1.5s ease-in;
+    		opacity: 0.85;
+    		z-index: 5;
 
-			.editOverlay {
-				width: 100%;
-	    		position: absolute;
-	    		background-color: black;
-	    		height: 0;
-	    		transition: height 1.5s ease-in;
-	    		opacity: 0.85;
-	    		z-index: 99;
+    		.castMessageOverlay, .searchOverlay, .notificationsOverlay, .settingsOverlay{
+    			display: none;
+    			color: white;
+    		}
+
+    		.castMessageOverlay {
+
+    			text-align: center;
+
+    			input[type="text"], textarea {
+    				color: black;
+    			}
+
+    			.groupSelect {
+
+    				padding: 0 10px 0;
+
+    				h6 {
+    					margin-bottom: 0;
+    				}
+
+	    			label {
+	    				display: inline-block;
+	    				margin: 0 5px;
+
+	    				input {
+	    					display: inline-block;
+	    				}
+	    			}
+    			}
     		}
 		}
 

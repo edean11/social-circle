@@ -19,7 +19,7 @@ function initialize() {
     mapTypeControl: false,
     scaleControl: false,
     draggable: false,
-    zindex: 99,
+    zindex: 2,
     transparency: 1
   };
 
@@ -39,11 +39,10 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 var $footer = $('.footer-container');
 //var $addGroupButton = $('#addGroup');
-var $castMessageButton = $('#castMessage');
-var $searchButton = $('#search');
-var $notificationsButton = $('#notifications');
-var $settingsButton = $('#settings');
-
+var $castMessageButton = $('#castMessageButton');
+var $searchButton = $('#searchButton');
+var $notificationsButton = $('#notificationsButton');
+var $settingsButton = $('#settingsButton');
 
 
 ////////////////////////////////
@@ -52,55 +51,45 @@ var $settingsButton = $('#settings');
 
 $castMessageButton.on("click", function(){
 
-  var editOverlay = $('<div></div>');
-    editOverlay.toggleClass('editOverlay');
     var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', '440px');
+    var castMessageOverlay = $('.castMessageOverlay');
+    castMessageOverlay.css('display', 'inline-block');
+    $castMessageButton.css('z-index', '10');
 
-  var setContainer = $('.set-container');
-
-  setContainer.append(editOverlay);
-
-})
+});
 
 $searchButton.on("click", function(){
 
-  var editOverlay = $('<div></div>');
-    editOverlay.toggleClass('editOverlay');
     var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', '440px');
 
-  var setContainer = $('.set-container');
-
-  setContainer.append(editOverlay);
-
-})
+});
 
 $notificationsButton.on("click", function(){
 
-  var editOverlay = $('<div></div>');
-    editOverlay.toggleClass('editOverlay');
     var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', '440px');
 
-  var setContainer = $('.set-container');
-
-  setContainer.append(editOverlay);
-
-})
+});
 
 $settingsButton.on("click", function(){
 
-  var editOverlay = $('<div></div>');
-    editOverlay.toggleClass('editOverlay');
     var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', '440px');
 
-  var setContainer = $('.set-container');
+});
 
-  setContainer.append(editOverlay);
 
-})
+///////////////////////////////
+////// Input Functions ////////
+///////////////////////////////
+
+function castMessageOverlay(appendTo) {
+  var castTitle = $('<input placeholder="Title"></input>');
+  var castMessage = $('<textarea placeholder="Message"></textarea>');
+  var castRadius
+}
 
 
 // Add Group Function
