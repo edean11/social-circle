@@ -16,15 +16,16 @@ html(lang="en-US")
       img(src="img/thesocialcircle.png", alt="Logo", title="The Social Circle")
     .container
       .map-container
+        .set-container
         .map-canvas#map-canvas
         .topleft-container
-          img(src="img/cast.png" alt="Cast" title="Cast Message")#addCircle
+          img(src="img/cast.png" alt="Cast" title="Cast Message")#castMessage
         .topright-container
-          img(src="img/search.png" alt="Search" title="Search Circles")
+          img(src="img/search.png" alt="Search" title="Search Circles")#search
         .bottomleft-container
-          img(src="img/notifications.png" alt="Notifications" title="Notifications")
+          img(src="img/notifications.png" alt="Notifications" title="Notifications")#notifications
         .bottomright-container
-          img(src="img/settings.png" alt="Settings" title="Settings")
+          img(src="img/settings.png" alt="Settings" title="Settings")#settings
       .footer-container
 
     script(src="vendor/lodash/lodash.min.js")

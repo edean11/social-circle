@@ -31,15 +31,82 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 
 //////////////////////////////////////////////////////////////
-///////////////////// Footer Group Add //////////////////////////
-//////////////////////////////////////////////////////////
+///////////////////// Navigation //////////////////////////
+////////////////////////////////////////////////////////////////
+
+
+// DOM Element Grab
 
 var $footer = $('.footer-container');
-var $addCircleButton = $('#addCircle');
+//var $addGroupButton = $('#addGroup');
+var $castMessageButton = $('#castMessage');
+var $searchButton = $('#search');
+var $notificationsButton = $('#notifications');
+var $settingsButton = $('#settings');
 
-$addCircleButton.on("click", function(){
 
-  var existingDivs = [];
+
+////////////////////////////////
+// Navigation Event Listeners //
+////////////////////////////////
+
+$castMessageButton.on("click", function(){
+
+  var editOverlay = $('<div></div>');
+    editOverlay.toggleClass('editOverlay');
+    var editOverlaySelect = $('.editOverlay');
+    editOverlaySelect.css('height', '440px');
+
+  var setContainer = $('.set-container');
+
+  setContainer.append(editOverlay);
+
+})
+
+$searchButton.on("click", function(){
+
+  var editOverlay = $('<div></div>');
+    editOverlay.toggleClass('editOverlay');
+    var editOverlaySelect = $('.editOverlay');
+    editOverlaySelect.css('height', '440px');
+
+  var setContainer = $('.set-container');
+
+  setContainer.append(editOverlay);
+
+})
+
+$notificationsButton.on("click", function(){
+
+  var editOverlay = $('<div></div>');
+    editOverlay.toggleClass('editOverlay');
+    var editOverlaySelect = $('.editOverlay');
+    editOverlaySelect.css('height', '440px');
+
+  var setContainer = $('.set-container');
+
+  setContainer.append(editOverlay);
+
+})
+
+$settingsButton.on("click", function(){
+
+  var editOverlay = $('<div></div>');
+    editOverlay.toggleClass('editOverlay');
+    var editOverlaySelect = $('.editOverlay');
+    editOverlaySelect.css('height', '440px');
+
+  var setContainer = $('.set-container');
+
+  setContainer.append(editOverlay);
+
+})
+
+
+// Add Group Function
+
+function addGroup(){
+    var existingDivs = [];
   _.forEach($footer.children(), function(c){
     existingDivs.push(c);
   });
@@ -57,6 +124,5 @@ $addCircleButton.on("click", function(){
     $circleContainer.css("border", "4px solid black");
     $circleContainer.css("border-radius", "25%");
   $footer.append($circleContainer);
-
-})
+}
 
