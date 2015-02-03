@@ -28,3 +28,35 @@ function initialize() {
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
+
+
+//////////////////////////////////////////////////////////////
+///////////////////// Footer Group Add //////////////////////////
+//////////////////////////////////////////////////////////
+
+var $footer = $('.footer-container');
+var $addCircleButton = $('#addCircle');
+
+$addCircleButton.on("click", function(){
+
+  var existingDivs = [];
+  _.forEach($footer.children(), function(c){
+    existingDivs.push(c);
+  });
+
+  var windowWidth = $( window ).width();
+  var circleContainerWidth = windowWidth/6;
+  var circleContainerHeight = circleContainerWidth;
+
+  var $circleContainer = $('<div class="circleContainer"></div>')
+    $circleContainer.css("display", "inline-block");
+    $circleContainer.css("background-color", "white");
+    $circleContainer.css("width", circleContainerWidth);
+    $circleContainer.css("height", circleContainerHeight);
+    $circleContainer.css("margin", "5px");
+    $circleContainer.css("border", "4px solid black");
+    $circleContainer.css("border-radius", "25%");
+  $footer.append($circleContainer);
+
+})
+
