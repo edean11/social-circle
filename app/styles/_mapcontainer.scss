@@ -122,14 +122,57 @@
     		.notificationsOverlay {
     			.notifications {
 
-    				text-align: left;
-
     				.addRemoveButtons {
     					width: 20px;
     					text-align: inherit;
     				}
+
+                    .notificationsClose {
+                        text-align: center;
+                    }
     			}
     		}
+
+            .settingsOverlay {
+
+                .settings-top{
+
+                    padding-top: 20px;
+
+                    .settingsInputWidth{
+                        width: 200px;
+                        padding: 0;
+                        color: black;
+                    }
+                }
+
+                .settings-bottom {
+
+                    .defaultSettingsButton {
+                        background-color: red;
+                        color: white;
+                        opacity: 0.8;
+                        width: 150px;
+                        margin: 20px 20px 0;
+
+                        &:hover {
+                            background-color: lighten(red, 10%);
+                        }
+                    }
+
+                    .saveSettingsButton {
+                        background-color: green;
+                        color: white;
+                        opacity: 0.8;
+                        width: 150px;
+                        margin: 20px;
+
+                        &:hover {
+                            background-color: lighten(green, 10%);
+                        }
+                    }
+                }
+            }
 		}
 
 		.topleft-container {

@@ -59,6 +59,11 @@ $castMessageButton.on("click", function(){
     castMessageOverlay.css('display', 'inline-block');
     $castMessageButton.css('z-index', '10');
 
+    $('.submitCastInfo').click(function(){
+      castMessageOverlay.css('display', 'none');
+      editOverlaySelect.css('height', 0);
+    });
+
 });
 
 $searchButton.on("click", function(){
@@ -69,6 +74,11 @@ $searchButton.on("click", function(){
     var searchOverlay = $('.searchOverlay');
     searchOverlay.css('display', 'inline-block');
     $searchButton.css('z-index', '10');
+
+    $('.submitSearchButton').click(function(){
+      searchOverlay.css('display', 'none');
+      editOverlaySelect.css('height', 0);
+    });
 
 });
 
@@ -81,6 +91,11 @@ $notificationsButton.on("click", function(){
     notificationsOverlay.css('display', 'inline-block');
     $notificationsButton.css('z-index', '10');
 
+    $('.notificationsClose').click(function(){
+      notificationsOverlay.css('display', 'none');
+      editOverlaySelect.css('height', 0);
+    });
+
 });
 
 $settingsButton.on("click", function(){
@@ -91,6 +106,11 @@ $settingsButton.on("click", function(){
     var settingsOverlay = $('.settingsOverlay');
     settingsOverlay.css('display', 'inline-block');
     $settingsButton.css('z-index', '10');
+
+    $('.saveSettingsButton').click(function(){
+      settingsOverlay.css('display', 'none');
+      editOverlaySelect.css('height', 0);
+    });
 
 });
 
@@ -152,7 +172,6 @@ $removeCircleButton.on('click', function(){
 //////////////////////////////////////////////////////////
 
 
-
 ///////// Add Notifications ///////////
 
 function addNotification(){
@@ -164,7 +183,7 @@ function addNotification(){
     $notificationContainer.css("height", "75px");
     $notificationContainer.css("margin", "5px");
     $notificationContainer.css("border", "4px solid white");
-    $notificationContainer.css("border-radius", "25%");
+    $notificationContainer.css("border-radius", "10%");
   $notificationsAppender.append($notificationContainer);
 }
 

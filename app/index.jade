@@ -51,7 +51,7 @@ html(lang="en-US")
                   button.resetCastInfo.
                     Reset 
                 .six.columns
-                  button.submitCastInfo.
+                  button.submitCastInfo.submitButton.
                     Broadcast
           .searchOverlay
             .searchcircle-container
@@ -66,7 +66,7 @@ html(lang="en-US")
                   button.defaultSearchButton.
                     Default
                 .six.columns
-                  button.submitSearchButton.
+                  button.submitSearchButton.submitButton.
                     Search
               
           .notificationsOverlay
@@ -74,40 +74,40 @@ html(lang="en-US")
               img(src="img/addButton.png" alt="Add Circle" title="Add Circle")#addNotificationButton.addRemoveButtons
               img(src="img/removeButton.png" alt="Remove Circle" title="Remove Circle")#removeNotificationButton.addRemoveButtons
               ul.notifications-list#notificationsAppender
+              button.notificationsClose.submitButton.
+                    Close
           .settingsOverlay
             .settings-top
               .row
                 .six.columns
-                  label(for="castTitle") Title
-                  input(type="text")#castTitle.inputWidth
-                  label(for="castMessage") Message
-                  textarea(maxlength="100")#castMessageText.inputWidth
-                  label(for="datetimepicker") Expiration Date
-                  input(type="text")#datetimepicker.inputWidth
+                  h6 User Name 
+                  div.insertUserName
+                  h6 User Avatar
+                  div.inserUserAvatar
+                    button.changeAvatarButton.
+                      CHANGE AVATAR
                 .six.columns
-                  label(for="castAttachment") Attachment
-                  input(type="file")#castAttachment
-                  .groupSelect
-                    h6 Cast Message to...
-                    label Group
-                      input(type="checkbox" label="Example Group")
-                    label Group
-                      input(type="checkbox" label="Example Group")
-                    label Group
-                      input(type="checkbox" label="Example Group")
-                    label Group
-                      input(type="checkbox" label="Example Group")
-                    label Group
-                      input(type="checkbox" label="Example Group")
-                    label Group
-                      input(type="checkbox" label="Example Group")
+                  h6 Default Search Radius
+                  select(name="defaultsearchradius")#defaultSearchRadius.settingsInputWidth
+                    option(value="2 miles" name="2 miles") 2 miles
+                    option(value="5 miles" selected) 5 miles
+                    option(value="10 miles") 10 miles
+                    option(value="15 miles") 15 miles
+                    option(value="20 miles") 20 miles
+                    option(value="25 miles") 25 miles
+                    option(value="50 miles") 50 miles
+                  h5 Default Cast Position
+                  label Current Location 
+                    input(type="radio" name="defaultcastposition" value="current location" checked)#defaultCastPositionCurrent
+                  label Choose Location 
+                    input(type="radio" name="defaultcastposition" value="current location")#defaultCastPositionChoose
             .settings-bottom
               .row
                 .six.columns
-                  button.defaultSettings.
+                  button.defaultSettingsButton.
                     Default 
                 .six.columns
-                  button.saveSettings.
+                  button.saveSettingsButton.submitButton.
                     Save
         .map-canvas#map-canvas
         .topleft-container
