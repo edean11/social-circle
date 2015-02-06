@@ -19,31 +19,113 @@ html(lang="en-US")
       .map-container
         .editOverlay
           .castMessageOverlay
-            label(for="castTitle") Title
-            input(type="text")#castTitle
-            label(for="castMessage") Message
-            textarea(maxlength="100")#castMessageText
-            label(for="datetimepicker") Expiration Date
-            input(type="text")#datetimepicker
-            label(for="castAttachment") Attachment
-            input(type="file")#castAttachment
-            .groupSelect
-              h6 Cast Message to...
-              label Group
-                input(type="checkbox" label="Example Group")
-              label Group
-                input(type="checkbox" label="Example Group")
-              label Group
-                input(type="checkbox" label="Example Group")
-              label Group
-                input(type="checkbox" label="Example Group")
-              label Group
-                input(type="checkbox" label="Example Group")
-              label Group
-                input(type="checkbox" label="Example Group")
+            .cast-top
+              .row
+                .six.columns
+                  label(for="castTitle") Title
+                  input(type="text")#castTitle.inputWidth
+                  label(for="castMessage") Message
+                  textarea(maxlength="100")#castMessageText.inputWidth
+                  label(for="datetimepicker") Expiration Date
+                  input(type="text")#datetimepicker.inputWidth
+                .six.columns
+                  label(for="castAttachment") Attachment
+                  input(type="file")#castAttachment
+                  .groupSelect
+                    h6 Cast Message to...
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+            .cast-bottom
+              .row
+                .six.columns
+                  button.resetCastInfo.
+                    Reset 
+                .six.columns
+                  button.submitCastInfo.
+                    Broadcast
           .searchOverlay
+            .search-top
+              .row
+                .six.columns
+                  label(for="castTitle") Title
+                  input(type="text")#castTitle.inputWidth
+                  label(for="castMessage") Message
+                  textarea(maxlength="100")#castMessageText.inputWidth
+                  label(for="datetimepicker") Expiration Date
+                  input(type="text")#datetimepicker.inputWidth
+                .six.columns
+                  label(for="castAttachment") Attachment
+                  input(type="file")#castAttachment
+                  .groupSelect
+                    h6 Cast Message to...
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+            .search-bottom
+              .row
+                .six.columns
+                  button.resetSearch.
+                    Reset 
+                .six.columns
+                  button.submitSearch.
+                    Submit
           .notificationsOverlay
+            .notifications
+              ul.notifications-list
           .settingsOverlay
+            .settings-top
+              .row
+                .six.columns
+                  label(for="castTitle") Title
+                  input(type="text")#castTitle.inputWidth
+                  label(for="castMessage") Message
+                  textarea(maxlength="100")#castMessageText.inputWidth
+                  label(for="datetimepicker") Expiration Date
+                  input(type="text")#datetimepicker.inputWidth
+                .six.columns
+                  label(for="castAttachment") Attachment
+                  input(type="file")#castAttachment
+                  .groupSelect
+                    h6 Cast Message to...
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+                    label Group
+                      input(type="checkbox" label="Example Group")
+            .settings-bottom
+              .row
+                .six.columns
+                  button.defaultSettings.
+                    Default 
+                .six.columns
+                  button.saveSettings.
+                    Save
         .map-canvas#map-canvas
         .topleft-container
           img(src="img/cast.png" alt="Cast" title="Cast Message")#castMessageButton
@@ -54,6 +136,9 @@ html(lang="en-US")
         .bottomright-container
           img(src="img/settings.png" alt="Settings" title="Settings")#settingsButton
       .footer-container
+        img(src="img/addButton.png" alt="Add Circle" title="Add Circle")#addCircleButton.addRemoveButtons
+        img(src="img/removeButton.png" alt="Remove Circle" title="Remove Circle")#removeCircleButton.addRemoveButtons
+        .footerCircle-container
 
     script(src="vendor/lodash/lodash.min.js")
     script(src="vendor/jquery/dist/jquery.min.js")

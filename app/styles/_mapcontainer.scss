@@ -16,6 +16,7 @@
     		transition: height 1.5s ease-in;
     		opacity: 0.85;
     		z-index: 5;
+    		text-align: center;
 
     		.castMessageOverlay, .searchOverlay, .notificationsOverlay, .settingsOverlay{
     			display: none;
@@ -24,10 +25,14 @@
 
     		.castMessageOverlay {
 
-    			text-align: center;
+    			padding: 20px 0;
 
     			input[type="text"], textarea {
     				color: black;
+    			}
+
+    			.inputWidth {
+    				width: 200px;
     			}
 
     			.groupSelect {
@@ -46,6 +51,32 @@
 	    					display: inline-block;
 	    				}
 	    			}
+    			}
+
+    			.cast-bottom {
+    				padding: 40px 0;
+
+    				.resetCastInfo {
+    					background-color: red;
+    					color: white;
+    					opacity: 0.8;
+    					width: 150px;
+
+    					&:hover {
+    						background-color: lighten(red, 10%);
+    					}
+    				}
+
+    				.submitCastInfo {
+    					background-color: green;
+    					color: white;
+    					opacity: 0.8;
+    					width: 150px;
+
+    					&:hover {
+    						background-color: lighten(green, 10%);
+    					}
+    				}
     			}
     		}
 		}
@@ -114,7 +145,14 @@
 
 	.footer-container {
 		padding: 10px;
-		text-align: center;
+
+		.addRemoveButtons {
+			width: 20px;
+		}
+
+		.footerCircle-container {
+			text-align: center;
+		}
 	}
 
 }
