@@ -52,9 +52,9 @@ var $settingsButton = $('#settingsButton');
 
 $castMessageButton.on("click", function(){
 
-    var castMessageOverlayHeight = $('.castMessageOverlay').height();
+    var mapContainerHeight = $('.map-container').height();
     var editOverlaySelect = $('.editOverlay');
-    editOverlaySelect.css('height', '100%');
+    editOverlaySelect.css('height', mapContainerHeight);
     var castMessageOverlay = $('.castMessageOverlay');
     castMessageOverlay.css('display', 'inline-block');
     $castMessageButton.css('z-index', '10');
@@ -63,8 +63,9 @@ $castMessageButton.on("click", function(){
 
 $searchButton.on("click", function(){
 
+    var mapContainerHeight = $('.map-container').height();
     var editOverlaySelect = $('.editOverlay');
-    editOverlaySelect.css('height', '100%');
+    editOverlaySelect.css('height', mapContainerHeight);
     var searchOverlay = $('.searchOverlay');
     searchOverlay.css('display', 'inline-block');
     $searchButton.css('z-index', '10');
@@ -73,8 +74,9 @@ $searchButton.on("click", function(){
 
 $notificationsButton.on("click", function(){
 
+    var mapContainerHeight = $('.map-container').height();
     var editOverlaySelect = $('.editOverlay');
-    editOverlaySelect.css('height', '100%');
+    editOverlaySelect.css('height', mapContainerHeight);
     var notificationsOverlay = $('.notificationsOverlay');
     notificationsOverlay.css('display', 'inline-block');
     $notificationsButton.css('z-index', '10');
@@ -83,8 +85,9 @@ $notificationsButton.on("click", function(){
 
 $settingsButton.on("click", function(){
 
+    var mapContainerHeight = $('.map-container').height();
     var editOverlaySelect = $('.editOverlay');
-    editOverlaySelect.css('height', '100%');
+    editOverlaySelect.css('height', mapContainerHeight);
     var settingsOverlay = $('.settingsOverlay');
     settingsOverlay.css('display', 'inline-block');
     $settingsButton.css('z-index', '10');
@@ -148,6 +151,9 @@ $removeCircleButton.on('click', function(){
 /////////////////// Overlay Functions //////////////////////////
 //////////////////////////////////////////////////////////
 
+
+
+///////// Add Notifications ///////////
 
 function addNotification(){
 

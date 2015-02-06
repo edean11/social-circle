@@ -16,6 +16,7 @@
     		transition: height 1.5s ease-in;
     		opacity: 0.95;
     		z-index: 5;
+    		overflow: auto;
     		text-align: center;
 
     		.castMessageOverlay, .searchOverlay, .notificationsOverlay, .settingsOverlay{
@@ -187,7 +188,7 @@
 			position: absolute;
 			-webkit-mask-repeat: no-repeat;
 			-webkit-mask-position: 50%;
-			-webkit-mask-size: $mapWidth;//115%;
+			-webkit-mask-size: $mapWidth;
 			-webkit-mask-image: url(../img/circle.svg);
 		}
 
