@@ -38,11 +38,11 @@ google.maps.event.addDomListener(window, 'load', initialize);
 // DOM Element Grab
 
 var $footer = $('.footer-container');
-var $circleAppender = $('.footerCircle-container')
-//var $addGroupButton = $('#addGroup');
+var $circleAppender = $('.footerCircle-container');
 var $castMessageButton = $('#castMessageButton');
 var $searchButton = $('#searchButton');
 var $notificationsButton = $('#notificationsButton');
+var $notificationsAppender = $('#notificationsAppender');
 var $settingsButton = $('#settingsButton');
 
 
@@ -140,8 +140,40 @@ $removeCircleButton.on('click', function(){
     $(this).remove();
     $circleAppender.off('click');
   });
-
 });
 
+
+
+//////////////////////////////////////////////////////////////
+/////////////////// Overlay Functions //////////////////////////
+//////////////////////////////////////////////////////////
+
+
+function addNotification(){
+
+  var $notificationContainer = $('<div class="notificationContainer"></div>')
+    $notificationContainer.css("display", "inline-block");
+    $notificationContainer.css("background-color", "black");
+    $notificationContainer.css("width", "175px");
+    $notificationContainer.css("height", "75px");
+    $notificationContainer.css("margin", "5px");
+    $notificationContainer.css("border", "4px solid white");
+    $notificationContainer.css("border-radius", "25%");
+  $notificationsAppender.append($notificationContainer);
+}
+
+var $addNotificationButton = $('#addNotificationButton');
+var $removeNotificationButton = $('#removeNotificationButton');
+
+$addNotificationButton.click(function(){
+  addNotification();
+});
+
+$removeNotificationButton.on('click', function(){
+  $notificationsAppender.on('click', '.notificationContainer', function(){
+    $(this).remove();
+    $notificationsAppender.off('click');
+  });
+});
 
 

@@ -14,7 +14,7 @@
     		background-color: black;
     		height: 0;
     		transition: height 1.5s ease-in;
-    		opacity: 0.85;
+    		opacity: 0.95;
     		z-index: 5;
     		text-align: center;
 
@@ -76,6 +76,56 @@
     					&:hover {
     						background-color: lighten(green, 10%);
     					}
+    				}
+    			}
+    		}
+
+    		.searchOverlay {
+
+    			.searchcircle-container {
+    				margin-top: 30px;
+    			}
+
+    			h5 {
+    				margin: 10px 0;
+    			}
+
+    			.search-bottom {
+
+    				.defaultSearchButton {
+    					background-color: red;
+    					color: white;
+    					opacity: 0.8;
+    					width: 150px;
+    					margin: 20px;
+
+    					&:hover {
+    						background-color: lighten(red, 10%);
+    					}
+    				}
+
+    				.submitSearchButton {
+    					background-color: green;
+    					color: white;
+    					opacity: 0.8;
+    					width: 150px;
+    					margin: 20px;
+
+    					&:hover {
+    						background-color: lighten(green, 10%);
+    					}
+    				}
+    			}
+    		}
+
+    		.notificationsOverlay {
+    			.notifications {
+
+    				text-align: left;
+
+    				.addRemoveButtons {
+    					width: 20px;
+    					text-align: inherit;
     				}
     			}
     		}
