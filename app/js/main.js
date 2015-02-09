@@ -173,7 +173,7 @@ $removeCircleButton.on('click', function(){
 /////////////////// User Uploads ////////////////////////////
 ///////////////////////////////////////////////////////
 
-
+///////// Get User Avatar //////////
 
 ///////// Get Circle Icon //////////
 
@@ -193,26 +193,23 @@ circleIcon.addEventListener('change', function(e) {
 
           var img = new Image();
           img.src = reader.result;
-          //$(circleIconDisplayArea).css('border-radius', '50%');
-
-          circleIconDisplayArea.appendChild(img);
+          $(img).addClass('resizeableImage')
 
           var imageHeight = $(circleIconDisplayArea).height();
           var imageWidth = $(circleIconDisplayArea).width();
 
-          // function shortestImageSegment() {
-          //   if(imageHeight < imageWidth) {
-          //     $(circleIconDisplayArea).css('height', imageHeight+'px');
-          //     $(circleIconDisplayArea).css('width', imageHeight+'px');
-          //   } else { 
-          //     $(circleIconDisplayArea).css('width', imageWidth+'px');
-          //     $(circleIconDisplayArea).css('height', imageWidth+'px'); }
-          // }
-          
-          $(circleIcon).css('display', 'none');
+          circleIconDisplayArea.appendChild(img);
 
           console.log(imageHeight);
           console.log(imageWidth);
+
+          $('img.resizeableImage').imgAreaSelect({
+              handles: true,
+              aspectRatio: '1:1',
+              onSelectEnd: function(){ console.log('success!')}
+          });
+          
+          $(circleIcon).css('display', 'none');
 
           $(circleIconDisplayArea).css('border', '2px solid white');
         }
