@@ -69,13 +69,22 @@ html(lang="en-US")
                   button.submitSearchButton.submitButton.
                     Search
               
-          .notificationsOverlay
-            .notifications
-              img(src="img/addButton.png" alt="Add Circle" title="Add Circle")#addNotificationButton.addRemoveButtons
-              img(src="img/removeButton.png" alt="Remove Circle" title="Remove Circle")#removeNotificationButton.addRemoveButtons
-              ul.notifications-list#notificationsAppender
-              button.notificationsClose.submitButton.
-                    Close
+          .createCircleOverlay
+            .createcircle-top
+              h5 Circle Icon
+              input(type="file")#createCircleIcon
+              h5 Circle Name
+              input(type="text")#createCircleName
+              h5 Circle Description
+              input(type="text")#createCircleDescription
+            .createcircle-bottom
+              .row
+                .six.columns
+                  button.cancelCreateCircleButton.clearButton.
+                    Cancel
+                .six.columns
+                  button.submitCreateCircleButton.clearButton.
+                    Create
           .settingsOverlay
             .settings-top
               .row
@@ -89,7 +98,7 @@ html(lang="en-US")
                 .six.columns
                   h6 Default Search Radius
                   select(name="defaultsearchradius")#defaultSearchRadius.settingsInputWidth
-                    option(value="2 miles" name="2 miles") 2 miles
+                    option(value="2 miles") 2 miles
                     option(value="5 miles" selected) 5 miles
                     option(value="10 miles") 10 miles
                     option(value="15 miles") 15 miles
@@ -105,7 +114,7 @@ html(lang="en-US")
               .row
                 .six.columns
                   button.defaultSettingsButton.
-                    Default 
+                    Discard
                 .six.columns
                   button.saveSettingsButton.submitButton.
                     Save
@@ -115,7 +124,7 @@ html(lang="en-US")
         .topright-container
           img(src="img/search.png" alt="Search" title="Search Circles")#searchButton
         .bottomleft-container
-          img(src="img/notifications.png" alt="Notifications" title="Notifications")#notificationsButton
+          img(src="img/notifications.png" alt="Create Circle" title="Create Circle")#createCircleButton
         .bottomright-container
           img(src="img/settings.png" alt="Settings" title="Settings")#settingsButton
       .footer-container

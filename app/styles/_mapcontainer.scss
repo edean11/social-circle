@@ -98,7 +98,7 @@
     					color: white;
     					opacity: 0.8;
     					width: 150px;
-    					margin: 20px;
+    					margin: 10px;
 
     					&:hover {
     						background-color: lighten(red, 10%);
@@ -110,7 +110,7 @@
     					color: white;
     					opacity: 0.8;
     					width: 150px;
-    					margin: 20px;
+    					margin: 10px;
 
     					&:hover {
     						background-color: lighten(green, 10%);
@@ -119,18 +119,35 @@
     			}
     		}
 
-    		.notificationsOverlay {
-    			.notifications {
+    		.createCircleOverlay {
+    			
+                .createcircle-top {
+                    color: white;
+                }
 
-    				.addRemoveButtons {
-    					width: 20px;
-    					text-align: inherit;
-    				}
+                .cancelCreateCircleButton {
+                        background-color: red;
+                        color: white;
+                        opacity: 0.8;
+                        width: 150px;
+                        margin: 10px;
 
-                    .notificationsClose {
-                        text-align: center;
+                        &:hover {
+                            background-color: lighten(red, 10%);
+                        }
                     }
-    			}
+
+                .submitCreateCircleButton {
+                    background-color: green;
+                    color: white;
+                    opacity: 0.8;
+                    width: 150px;
+                    margin: 10px;
+
+                    &:hover {
+                        background-color: lighten(green, 10%);
+                    }
+                }
     		}
 
             .settingsOverlay {

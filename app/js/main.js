@@ -41,7 +41,7 @@ var $footer = $('.footer-container');
 var $circleAppender = $('.footerCircle-container');
 var $castMessageButton = $('#castMessageButton');
 var $searchButton = $('#searchButton');
-var $notificationsButton = $('#notificationsButton');
+var $createCircleButton = $('#createCircleButton');
 var $notificationsAppender = $('#notificationsAppender');
 var $settingsButton = $('#settingsButton');
 
@@ -82,17 +82,17 @@ $searchButton.on("click", function(){
 
 });
 
-$notificationsButton.on("click", function(){
+$createCircleButton.on("click", function(){
 
     var mapContainerHeight = $('.map-container').height();
     var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', mapContainerHeight);
-    var notificationsOverlay = $('.notificationsOverlay');
-    notificationsOverlay.css('display', 'inline-block');
-    $notificationsButton.css('z-index', '10');
+    var createCircleOverlay = $('.createCircleOverlay');
+    createCircleOverlay.css('display', 'inline-block');
+    $createCircleButton.css('z-index', '10');
 
-    $('.notificationsClose').click(function(){
-      notificationsOverlay.css('display', 'none');
+    $('.clearButton').click(function(){
+      createCircleOverlay.css('display', 'none');
       editOverlaySelect.css('height', 0);
     });
 
@@ -174,31 +174,31 @@ $removeCircleButton.on('click', function(){
 
 ///////// Add Notifications ///////////
 
-function addNotification(){
+// function addNotification(){
 
-  var $notificationContainer = $('<div class="notificationContainer"></div>')
-    $notificationContainer.css("display", "inline-block");
-    $notificationContainer.css("background-color", "black");
-    $notificationContainer.css("width", "175px");
-    $notificationContainer.css("height", "75px");
-    $notificationContainer.css("margin", "5px");
-    $notificationContainer.css("border", "4px solid white");
-    $notificationContainer.css("border-radius", "10%");
-  $notificationsAppender.append($notificationContainer);
-}
+//   var $notificationContainer = $('<div class="notificationContainer"></div>')
+//     $notificationContainer.css("display", "inline-block");
+//     $notificationContainer.css("background-color", "black");
+//     $notificationContainer.css("width", "175px");
+//     $notificationContainer.css("height", "75px");
+//     $notificationContainer.css("margin", "5px");
+//     $notificationContainer.css("border", "4px solid white");
+//     $notificationContainer.css("border-radius", "10%");
+//   $notificationsAppender.append($notificationContainer);
+// }
 
-var $addNotificationButton = $('#addNotificationButton');
-var $removeNotificationButton = $('#removeNotificationButton');
+// var $addNotificationButton = $('#addNotificationButton');
+// var $removeNotificationButton = $('#removeNotificationButton');
 
-$addNotificationButton.click(function(){
-  addNotification();
-});
+// $addNotificationButton.click(function(){
+//   addNotification();
+// });
 
-$removeNotificationButton.on('click', function(){
-  $notificationsAppender.on('click', '.notificationContainer', function(){
-    $(this).remove();
-    $notificationsAppender.off('click');
-  });
-});
+// $removeNotificationButton.on('click', function(){
+//   $notificationsAppender.on('click', '.notificationContainer', function(){
+//     $(this).remove();
+//     $notificationsAppender.off('click');
+//   });
+// });
 
 
