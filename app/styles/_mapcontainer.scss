@@ -19,7 +19,7 @@
     		overflow: auto;
     		text-align: center;
 
-    		.castMessageOverlay, .searchOverlay, .notificationsOverlay, .settingsOverlay{
+    		.castMessageOverlay, .searchOverlay, .createCircleOverlay, .settingsOverlay{
     			display: none;
     			color: white;
     		}
@@ -28,7 +28,7 @@
 
     			padding: 20px 0;
 
-    			input[type="text"], textarea {
+    			input, textarea {
     				color: black;
     			}
 

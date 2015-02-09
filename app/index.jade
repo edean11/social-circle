@@ -7,7 +7,6 @@ html(lang="en-US")
     title the social circle
     link(rel="stylesheet" href="vendor/skeleton/css/normalize.css")
     link(rel="stylesheet" href="vendor/skeleton/css/skeleton.css")
-    link(rel="stylesheet" href="vendor/jquery/jquery.datetimepicker.css")
     link(rel="stylesheet" href="css/main.css")
 
   body
@@ -27,7 +26,7 @@ html(lang="en-US")
                   label(for="castMessage") Message
                   textarea(maxlength="100")#castMessageText.inputWidth
                   label(for="datetimepicker") Expiration Date
-                  input(type="text")#datetimepicker.inputWidth
+                  input(type="datetime-local")#datetimepicker.inputWidth
                 .six.columns
                   label(for="castAttachment") Attachment
                   input(type="file")#castAttachment
@@ -132,8 +131,8 @@ html(lang="en-US")
         img(src="img/removeButton.png" alt="Remove Circle" title="Remove Circle")#removeCircleButton.addRemoveButtons
         .footerCircle-container
 
-    script(src="vendor/lodash/lodash.min.js")
     script(src="vendor/jquery/dist/jquery.min.js")
-    script(src="vendor/jquery/jquery.datetimepicker.js")
+    script(src="vendor/lodash/lodash.min.js")
+    script(src="vendor/moment/moment.js")
     script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2qt90yavxyrmR6Ff61nUniGmLMi51AlY")
     script(src="js/main.js")
