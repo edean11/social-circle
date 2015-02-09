@@ -62,6 +62,7 @@ $castMessageButton.on("click", function(){
     $('.submitCastInfo').click(function(){
       castMessageOverlay.css('display', 'none');
       editOverlaySelect.css('height', 0);
+      $castMessageButton.css('z-index', '3');
     });
 
 });
@@ -78,6 +79,7 @@ $searchButton.on("click", function(){
     $('.submitSearchButton').click(function(){
       searchOverlay.css('display', 'none');
       editOverlaySelect.css('height', 0);
+      $searchButton.css('z-index', '3');
     });
 
 });
@@ -94,6 +96,7 @@ $createCircleButton.on("click", function(){
     $('.clearButton').click(function(){
       createCircleOverlay.css('display', 'none');
       editOverlaySelect.css('height', 0);
+      $createCircleButton.css('z-index', '3');
     });
 
 });
@@ -110,6 +113,7 @@ $settingsButton.on("click", function(){
     $('.saveSettingsButton').click(function(){
       settingsOverlay.css('display', 'none');
       editOverlaySelect.css('height', 0);
+      $settingsButton.css('z-index', '3');
     });
 
 });
@@ -166,39 +170,5 @@ $removeCircleButton.on('click', function(){
 });
 
 
-
-//////////////////////////////////////////////////////////////
-/////////////////// Overlay Functions //////////////////////////
-//////////////////////////////////////////////////////////
-
-
-///////// Add Notifications ///////////
-
-// function addNotification(){
-
-//   var $notificationContainer = $('<div class="notificationContainer"></div>')
-//     $notificationContainer.css("display", "inline-block");
-//     $notificationContainer.css("background-color", "black");
-//     $notificationContainer.css("width", "175px");
-//     $notificationContainer.css("height", "75px");
-//     $notificationContainer.css("margin", "5px");
-//     $notificationContainer.css("border", "4px solid white");
-//     $notificationContainer.css("border-radius", "10%");
-//   $notificationsAppender.append($notificationContainer);
-// }
-
-// var $addNotificationButton = $('#addNotificationButton');
-// var $removeNotificationButton = $('#removeNotificationButton');
-
-// $addNotificationButton.click(function(){
-//   addNotification();
-// });
-
-// $removeNotificationButton.on('click', function(){
-//   $notificationsAppender.on('click', '.notificationContainer', function(){
-//     $(this).remove();
-//     $notificationsAppender.off('click');
-//   });
-// });
 
 
