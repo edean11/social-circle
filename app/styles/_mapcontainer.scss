@@ -123,6 +123,16 @@
     			
                 .createcircle-top {
                     color: white;
+
+                    #circleDisplayArea {
+                      margin-top: 2em;
+                      width: 100%;
+                      overflow-x: auto;
+
+                      img {
+                        max-width: 100%;
+                      }
+                    }
                 }
 
                 .cancelCreateCircleButton {

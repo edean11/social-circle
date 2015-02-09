@@ -1,6 +1,6 @@
 
 ///////////////////////////////////////////////////////////////////
-///////////////////// Google Maps Initialize ///////////////////////////
+///////////////////// Google Maps ///////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 var berlin = new google.maps.LatLng(52.520816, 13.410186);
@@ -168,6 +168,63 @@ $removeCircleButton.on('click', function(){
     $circleAppender.off('click');
   });
 });
+
+/////////////////////////////////////////////////////////
+/////////////////// User Uploads ////////////////////////////
+///////////////////////////////////////////////////////
+
+
+
+///////// Get Circle Icon //////////
+
+var circleIcon = document.getElementById('createCircleIcon');
+var circleIconDisplayArea = document.getElementById('circleDisplayArea');
+
+
+circleIcon.addEventListener('change', function(e) {
+      var file = circleIcon.files[0];
+      var imageType = /image.*/;
+
+      if (file.type.match(imageType)) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          circleIconDisplayArea.innerHTML = "";
+
+          var img = new Image();
+          img.src = reader.result;
+          //$(circleIconDisplayArea).css('border-radius', '50%');
+
+          circleIconDisplayArea.appendChild(img);
+
+          var imageHeight = $(circleIconDisplayArea).height();
+          var imageWidth = $(circleIconDisplayArea).width();
+
+          // function shortestImageSegment() {
+          //   if(imageHeight < imageWidth) {
+          //     $(circleIconDisplayArea).css('height', imageHeight+'px');
+          //     $(circleIconDisplayArea).css('width', imageHeight+'px');
+          //   } else { 
+          //     $(circleIconDisplayArea).css('width', imageWidth+'px');
+          //     $(circleIconDisplayArea).css('height', imageWidth+'px'); }
+          // }
+          
+          $(circleIcon).css('display', 'none');
+
+          console.log(imageHeight);
+          console.log(imageWidth);
+
+          $(circleIconDisplayArea).css('border', '2px solid white');
+        }
+
+        reader.readAsDataURL(file); 
+      } 
+
+      else {
+        circleIconDisplayArea.innerHTML = "File not supported!"
+      }
+});
+
 
 
 
