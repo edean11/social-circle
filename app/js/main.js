@@ -200,14 +200,14 @@ circleIcon.addEventListener('change', function(e) {
 
           circleIconDisplayArea.appendChild(img);
 
-          console.log(imageHeight);
-          console.log(imageWidth);
-
           $('img.resizeableImage').imgAreaSelect({
               handles: true,
               aspectRatio: '1:1',
               onSelectEnd: function(){ console.log('success!')}
           });
+
+          //var ias = $('img.resizableImage').imgAreaSelect({ instance: true });
+          //console.log(ias.getSelection());
           
           $(circleIcon).css('display', 'none');
 
