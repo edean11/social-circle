@@ -7,6 +7,7 @@ html(lang="en-US")
     title the social circle
     link(rel="stylesheet" href="vendor/skeleton/css/normalize.css")
     link(rel="stylesheet" href="vendor/skeleton/css/skeleton.css")
+    link(rel="stylesheet" href="vendor/jcrop/css/jquery.Jcrop.min.css")
     link(rel="stylesheet" href="css/main.css")
 
   body
@@ -73,6 +74,7 @@ html(lang="en-US")
               h5 Circle Icon
               input(type="file")#createCircleIcon
               #circleDisplayArea
+              #preview
               h5 Circle Name
               input(type="text")#createCircleName
               h5 Circle Description
@@ -133,8 +135,8 @@ html(lang="en-US")
         .footerCircle-container
 
     script(src="vendor/jquery/dist/jquery.min.js")
+    script(src="vendor/jcrop/js/jquery.Jcrop.min.js")
     script(src="vendor/lodash/lodash.min.js")
     script(src="vendor/moment/moment.js")
-    script(src="js/jquery.imgareaselect.pack.js")
     script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2qt90yavxyrmR6Ff61nUniGmLMi51AlY")
     script(src="js/main.js")

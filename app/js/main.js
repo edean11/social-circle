@@ -175,7 +175,7 @@ $removeCircleButton.on('click', function(){
 
 ///////// Get User Avatar //////////
 
-///////// Get Circle Icon //////////
+///////// Create Circle Icon //////////
 
 var circleIcon = document.getElementById('createCircleIcon');
 var circleIconDisplayArea = document.getElementById('circleDisplayArea');
@@ -199,15 +199,46 @@ circleIcon.addEventListener('change', function(e) {
           var imageWidth = $(circleIconDisplayArea).width();
 
           circleIconDisplayArea.appendChild(img);
-
-          $('img.resizeableImage').imgAreaSelect({
-              handles: true,
-              aspectRatio: '1:1',
-              onSelectEnd: function(){ console.log('success!')}
+          
+          $(function(){
+            $('#circleDisplayArea').Jcrop({
+              onChange: showPreview,
+              onSelect: showPreview,
+              aspectRatio: 1
+            });
           });
 
-          //var ias = $('img.resizableImage').imgAreaSelect({ instance: true });
-          //console.log(ias.getSelection());
+          function showPreview(coords) {
+            var rx = 100 / coords.w;
+            var ry = 100 / coords.h;
+
+            $('#preview').css({
+              width: Math.round(rx * 500) + 'px',
+              height: Math.round(ry * 370) + 'px',
+              marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+              marginTop: '-' + Math.round(ry * coords.y) + 'px'
+            });
+          }
+          //$(circleIconDisplayArea).css("background-image", img);
+
+          // $('img.resizeableImage').imgAreaSelect({
+          //     handles: true,
+          //     aspectRatio: '1:1',
+          //     instance: true,
+          //     onSelectEnd: function(image, selection){ 
+          //       var coordinates = [selection.x1, selection.y1, selection.x2, selection.y2];
+          //       var dimensions = [selection.width, selection.height];
+
+          //       $avatarContainer = $('.avatarContainer');
+
+          //       $avatarContainer.css('background-image', img);
+          //       $avatarContainer.css('background-position', coordinates[0]+' '+coordinates[1]);
+          //       $avatarContainer.css('width', dimensions[0]);
+          //       $avatarContainer.css('height', dimensions[1]);
+
+          //       $(circleIconDisplayArea).toggleClass('hidden');
+          //     }
+          // });
           
           $(circleIcon).css('display', 'none');
 
