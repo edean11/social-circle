@@ -149,7 +149,7 @@ function addCircle(){
 
 //These click events and buttons to click will be unnecessary once the back end is configured.  The back end should
 //read/write the followed circles (groups) tied to the specific user from the database.  This is then updated every so often.
-//When a user clicks any of these circles, the map above will update to only show messages corersponding to that group(i.e. this is a quick filter function)
+//When a user clicks any of these circles, the map above will update to only show messages corresponding to that group(i.e. this is a quick filter function)
 
 // Add Circle Click Event
 
@@ -179,6 +179,7 @@ $removeCircleButton.on('click', function(){
 
 var circleIcon = document.getElementById('createCircleIcon');
 var circleIconDisplayArea = document.getElementById('circleDisplayArea');
+var preview = document.getElementById('preview');
 
 
 circleIcon.addEventListener('change', function(e) {
@@ -193,59 +194,66 @@ circleIcon.addEventListener('change', function(e) {
 
           var img = new Image();
           img.src = reader.result;
-          $(img).addClass('resizeableImage')
-
-          var imageHeight = $(circleIconDisplayArea).height();
-          var imageWidth = $(circleIconDisplayArea).width();
 
           circleIconDisplayArea.appendChild(img);
+
+          var imgPreview = new Image();
+          imgPreview.src = reader.result;
+          $('#preview').append(imgPreview);
+
+          //Create variables (in this scope) to hold the API and image size
+          var jcrop_api,
+              boundx,
+              boundy,
+
+              // Grab some information about the preview pane
+              $preview = $('.preview-container'),
+              $pcnt = $('.preview-container #preview'),
+              $pimg = $('.preview-container #preview img'),
+
+              xsize = $pcnt.width(),
+              ysize = $pcnt.height();
           
-          $(function(){
-            $('#circleDisplayArea').Jcrop({
-              onChange: showPreview,
-              onSelect: showPreview,
-              aspectRatio: 1
-            });
+          console.log('init',[xsize,ysize]);
+          $(circleIconDisplayArea).Jcrop({
+            onChange: updatePreview,
+            onSelect: updatePreview,
+            aspectRatio: xsize / ysize
+          },function(){
+            // Use the API to get the real image size
+            var bounds = this.getBounds();
+            boundx = bounds[0];
+            boundy = bounds[1];
+            // Store the API in the jcrop_api variable
+            jcrop_api = this;
+
+            // Move the preview into the jcrop container for css positioning
+            $preview.appendTo(jcrop_api.ui.holder);
           });
 
-          function showPreview(coords) {
-            var rx = 100 / coords.w;
-            var ry = 100 / coords.h;
+          function updatePreview(c)
+          {
+            if (parseInt(c.w) > 0)
+            {
+              var rx = xsize / c.w;
+              var ry = ysize / c.h;
 
-            $('#preview').css({
-              width: Math.round(rx * 500) + 'px',
-              height: Math.round(ry * 370) + 'px',
-              marginLeft: '-' + Math.round(rx * coords.x) + 'px',
-              marginTop: '-' + Math.round(ry * coords.y) + 'px'
-            });
-          }
-          //$(circleIconDisplayArea).css("background-image", img);
-
-          // $('img.resizeableImage').imgAreaSelect({
-          //     handles: true,
-          //     aspectRatio: '1:1',
-          //     instance: true,
-          //     onSelectEnd: function(image, selection){ 
-          //       var coordinates = [selection.x1, selection.y1, selection.x2, selection.y2];
-          //       var dimensions = [selection.width, selection.height];
-
-          //       $avatarContainer = $('.avatarContainer');
-
-          //       $avatarContainer.css('background-image', img);
-          //       $avatarContainer.css('background-position', coordinates[0]+' '+coordinates[1]);
-          //       $avatarContainer.css('width', dimensions[0]);
-          //       $avatarContainer.css('height', dimensions[1]);
-
-          //       $(circleIconDisplayArea).toggleClass('hidden');
-          //     }
-          // });
+              $pimg.css({
+                width: Math.round(rx * boundx) + 'px',
+                height: Math.round(ry * boundy) + 'px',
+                marginLeft: '-' + Math.round(rx * c.x) + 'px',
+                marginTop: '-' + Math.round(ry * c.y) + 'px'
+              });
+            }
+          };
           
           $(circleIcon).css('display', 'none');
-
           $(circleIconDisplayArea).css('border', '2px solid white');
+          $('.createCircleInputs').css('margin-top', '200px');
+          $('.preview-container').css('display', 'block');
         }
 
-        reader.readAsDataURL(file); 
+        reader.readAsDataURL(file);
       } 
 
       else {

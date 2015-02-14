@@ -74,11 +74,13 @@ html(lang="en-US")
               h5 Circle Icon
               input(type="file")#createCircleIcon
               #circleDisplayArea
-              #preview
-              h5 Circle Name
-              input(type="text")#createCircleName
-              h5 Circle Description
-              input(type="text")#createCircleDescription
+              .preview-container
+                #preview
+              .createCircleInputs
+                h5 Circle Name
+                input(type="text")#createCircleName
+                h5 Circle Description
+                input(type="text")#createCircleDescription
             .createcircle-bottom
               .row
                 .six.columns
@@ -98,15 +100,6 @@ html(lang="en-US")
                     button.changeAvatarButton.
                       CHANGE AVATAR
                 .six.columns
-                  h6 Default Search Radius
-                  select(name="defaultsearchradius")#defaultSearchRadius.settingsInputWidth
-                    option(value="2 miles") 2 miles
-                    option(value="5 miles" selected) 5 miles
-                    option(value="10 miles") 10 miles
-                    option(value="15 miles") 15 miles
-                    option(value="20 miles") 20 miles
-                    option(value="25 miles") 25 miles
-                    option(value="50 miles") 50 miles
                   h5 Default Cast Position
                   label Current Location 
                     input(type="radio" name="defaultcastposition" value="current location" checked)#defaultCastPositionCurrent
