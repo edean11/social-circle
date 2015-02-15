@@ -1,40 +1,4 @@
 
-///////////////////////////////////////////////////////////////////
-///////////////////// Google Maps ///////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-var berlin = new google.maps.LatLng(52.520816, 13.410186);
-
-var markers = [];
-
-var map;
-
-function initialize() {
-  var mapOptions = {
-    zoom: 12,
-    center: berlin,
-    disableDefaultUI: true,
-    scrollwheel: false,
-    navigationControl: false,
-    mapTypeControl: false,
-    scaleControl: false,
-    draggable: false,
-    zindex: 2,
-    transparency: 1
-  };
-
-  map = new google.maps.Map(document.getElementById('map-canvas'),
-          mapOptions);
-}
-
-google.maps.event.addDomListener(window, 'load', initialize);
-
-
-//////////////////////////////////////////////////////////////
-///////////////////// Navigation //////////////////////////
-////////////////////////////////////////////////////////////////
-
-
 // DOM Element Grab
 
 var $footer = $('.footer-container');
@@ -45,6 +9,110 @@ var $createCircleButton = $('#createCircleButton');
 var $notificationsAppender = $('#notificationsAppender');
 var $settingsButton = $('#settingsButton');
 
+var mapContainerHeight = $('.map-container').height();
+var editOverlaySelect = $('.editOverlay');
+
+///////////////////////////////////////////////////////////////////
+///////////////////// Google Maps ///////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+var mapOptions = {
+  zoom: 10,
+  center: new google.maps.LatLng(-33.9, 151.2),
+  disableDefaultUI: true,
+  scrollwheel: true,
+  navigationControl: false,
+  mapTypeControl: false,
+  scaleControl: true,
+  draggable: true,
+  zindex: 2,
+  transparency: 1
+}
+var map = new google.maps.Map(document.getElementById('map-canvas'),
+                              mapOptions);
+
+
+//////////////////////////////////////////////////////////////////////
+/////////////////// Cast Object Creation and Placement /////////////////
+////////////////////////////////////////////////////////////////////
+
+var iconCounter = 0;
+
+function createCastInfo(key){
+  var $castTitle = $('#castTitle');
+  var $castMessageText = $('#castMessageText');
+  var $expirationDate = $('#datetimepicker');
+  var $castAttachment = $('#castAttachment');
+  var $castGroups = $('.castGroups');
+
+  var castInfo = {key: {'title': $castTitle.val(), 'text': $castMessageText.val(),
+                  'expiration': $expirationDate.val(), 'attachments': $castAttachment.files,
+                  'groups': $castGroups.val()}}
+
+  return castInfo;
+}
+
+function setMarker(lat, longt) {
+
+  var position = new google.maps.LatLng(lat, longt);
+  var castInfo = createCastInfo(iconCounter);
+
+  var marker = new google.maps.Marker({
+      position: position,
+      map: map,
+      //icon: image,
+      //shape: shape,
+      title: castInfo.key.title,
+      zIndex: iconCounter+1
+  });
+  marker.set('id', 'icon'+iconCounter);
+
+  iconCounter++;
+}
+
+$('.submitCastInfo').click(function(){
+  var castMessageOverlay = $('.castMessageOverlay');
+  castMessageOverlay.css('display', 'none');
+  editOverlaySelect.css('height', 0);
+  $castMessageButton.css('z-index', '3');
+
+  var test = $('#castPositionChoose').is(':checked');
+  console.log(test);
+
+  if($('#castPositionChoose').is(':checked')) {
+    google.maps.event.addListenerOnce(map, 'click', function(event) {
+      var lat = (event.latLng).k
+      var lng = (event.latLng).D
+      setMarker(lat, lng);
+    });
+  } else {
+
+  }
+});
+
+  // var image = {
+  //   url: 'https://dl.dropboxusercontent.com/u/27160305/img/cast.png',
+  //   // This marker is 20 pixels wide by 32 pixels tall.
+  //   size: new google.maps.Size(157, 164),
+  //   // The origin for this image is 0,0.
+  //   origin: new google.maps.Point(0,0),
+  //   // The anchor for this image is the base of the flagpole at 0,32.
+  //   anchor: new google.maps.Point(78.5, 164)
+  // };
+  // console.log(image.url);
+
+  // var shape = {
+  //     coords: [1, 1, 1, 20, 18, 20, 18 , 1],
+  //     type: 'poly'
+  // };
+
+//google.maps.event.addDomListener(window, 'load', initialize);
+
+
+//////////////////////////////////////////////////////////////
+///////////////////// Navigation //////////////////////////
+////////////////////////////////////////////////////////////////
+
 
 ////////////////////////////////
 // Navigation Event Listeners //
@@ -52,18 +120,10 @@ var $settingsButton = $('#settingsButton');
 
 $castMessageButton.on("click", function(){
 
-    var mapContainerHeight = $('.map-container').height();
-    var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', mapContainerHeight);
     var castMessageOverlay = $('.castMessageOverlay');
     castMessageOverlay.css('display', 'inline-block');
     $castMessageButton.css('z-index', '10');
-
-    $('.submitCastInfo').click(function(){
-      castMessageOverlay.css('display', 'none');
-      editOverlaySelect.css('height', 0);
-      $castMessageButton.css('z-index', '3');
-    });
 
 });
 
