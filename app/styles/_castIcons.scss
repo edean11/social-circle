@@ -7,7 +7,7 @@
   -webkit-transition: width 0.3s ease;
   -moz-transition: width 0.3s ease;
   height: $iconSize;
-  border: 1px solid black;
+  border: 2px solid black;
   border-radius: $iconSize;
   background-color: grey;
   position: absolute;
@@ -15,6 +15,25 @@
   margin-left: -($iconSize/2);
   margin-top: -($iconSize/2);
   opacity: 0.8;
+  text-align: center;
+  overflow: auto;
+}
+
+.iconTitle, .iconText, .iconExpiration {
+  display: none;
+  margin: 0;
+  color: black;
+  font-size: 0.8em;
+}
+
+.iconTitle {
+  margin-top: 1px;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.iconExpiration {
+  margin-top: -5px;
 }
 
 

@@ -142,7 +142,7 @@
                       display: none;
                       position: absolute;
                       z-index: 2000;
-                      top: 290px;
+                      top: 330px;
                       left: 120px;
                       padding: 6px;
 
@@ -303,18 +303,6 @@
 			-webkit-mask-image: url(../img/circle.svg);
 		}
 
-	}
-
-	.footer-container {
-		padding: 10px;
-
-		.addRemoveButtons {
-			width: 20px;
-		}
-
-		.footerCircle-container {
-			text-align: center;
-		}
 	}
 
 }

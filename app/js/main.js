@@ -61,49 +61,96 @@ function setMarker(lat, longt) {
       position: position,
       map: map,
       draggable: true,
-      content: createCircleTimer(iconCounter),
+      content: createCircleIcon(iconCounter),
       title: castInfo.title,
       zIndex: iconCounter+1
   });
 
-  marker.set('id', iconCounter+'icon');
+  marker.set('id', iconCounter);
   google.maps.event.addListener(marker, 'click', function(event){
-    if($('.'+this.id).width()===40){
-      $('.'+this.id).width('140px');
-      console.log($('.'+this.id).width())
-    } else {
-      console.log($('.'+this.id).width())
-      $('.'+this.id).width('40px');
-    }
+    iconWidthChange(this);
   });
   iconCounter++;
   //spinnerAnimation('100s', iconCounter);
 
 }
 
-function createCircleTimer(key) {
-  // var spinner = '<div class="'+key+'spinner pie spinner"></div>',
-  //     filler = '<div class="'+key+'filler pie filler"></div>',
-  //     mask = '<div class="'+key+'mask mask"></div>';
-  // var castContainer = '<div class="timerContainer '+key+'timer timer">'+spinner+filler+mask+'</div>';
+function iconWidthChange(that) {
+  if($('.'+that.id+'icon').width()===40){
+    $('.'+that.id+'icon').width('180px');
+    $('.'+that.id+'icon').css('padding-left', '8px');
+    $('.'+that.id+'iconTitle').css('display', 'block');
+    $('.'+that.id+'iconText').css('display', 'inline-block');
+    //$('.'+this.id+'iconExpiration').css('display', 'inline-block');
+    timeCirclesCreate(that);
+  } else {
+    $('.'+that.id+'icon').width('40px');
+    $('.'+that.id+'icon').css('padding-left', '0px');
+    $('.'+that.id+'iconTitle').css('display', 'none');
+    $('.'+that.id+'iconText').css('display', 'none');
+    //$('.'+this.id+'iconExpiration').css('display', 'none');
+    var $timeCircleContainer = $('.timeCircle-container');
+    $timeCircleContainer.empty();  
+  }
+}
+
+function timeCirclesCreate(thatother) {
+  var $timeCircleContainer = $('.timeCircle-container');
+  var expiration = $('.'+thatother.id+'iconExpiration').text();
+  var $timeCircle = $('<div class="timeCircle timeCircle'+thatother.id+'" data-date="'+expiration+'"></div>');
+  $timeCircleContainer.append($timeCircle);
+  $('.timeCircle'+thatother.id).TimeCircles();
+}
+
+function createCircleIcon(key) {
   var castInfo = createCastInfo();
   var imgSrc = '';
   var iconPic = '<img class="iconPic '+key+'iconPic" src="#"></img>';
-  var castContainer = '<div class="icon '+key+'icon"></div>';
-  console.log(castContainer);
+  var iconTitle = '<p class="iconTitle '+key+'iconTitle">'+castInfo.title+'</p>';
+  var iconText = '<p class="iconText '+key+'iconText">'+castInfo.text+'</p>';
+  var expiration = castInfo.expiration;
+  var tIndex = expiration.indexOf('T');
+  var expirationLength = expiration.length;
+  var formattedExpiration = expiration.substr(0,tIndex)+' '+expiration.substr(tIndex+1,expirationLength-1);
+  var iconExpiration = '<p class="iconExpiration '+key+'iconExpiration">'+formattedExpiration+'</p>'
+  var castContainer = '<div class="icon '+key+'icon">'+iconTitle+iconText+iconExpiration+'</div>';
 
   return castContainer;
 }
 
-// function createCircleTimer(key, expiration) {
-//   var tIndex = expiration.indexOf('T');
-//   var expirationLength = expiration.length;
-//   var formattedExpiration = expiration.substr(0,tIndex)+' '+expiration.substr(tIndex+1,expirationLength-1);
-//   var $timeCircle = '<div class="'+key+'icon icon" data-date="'+formattedExpiration+'"></div>';
-//   console.log($timeCircle);
-//   $('.'+key+'icon').TimeCircles();
-//   return $timeCircle;
-// }
+function refreshExpirationStyles(){
+  var $icons = $('.icon');
+  for(i=0;i<$icons.length;i++){
+    console.log($($icons[i]).children('.iconExpiration').text());
+    var color = expirationColor($($icons[i]).children('.iconExpiration').text());
+    $($icons[i]).css('border-color', color);
+  }
+}
+
+function expirationColor(expiration){
+  var expirationFormatted = moment(expiration).format();
+  var now = moment();
+  var timeleft = moment(expirationFormatted).from(now);
+  var timeScaleIndex = timeleft.lastIndexOf(' ');
+  var timeScale = timeleft.slice(timeScaleIndex+1,timeleft.length);
+  var color;
+
+  if(timeScale === 'year' || timeScale === 'years') {
+    color = 'purple';
+  } else if(timeScale === 'month' || timeScale === 'months') {
+    color = 'blue';
+  } else if(timeScale === 'day' || timeScale === 'days') {
+    color = 'green';
+  } else if(timeScale === 'hour' || timeScale === 'hours') {
+    color = 'yellow';
+  } else if(timeScale === 'minute' || timeScale === 'minutes') {
+    color = 'orange';
+  } else if(timeScale === 'second' || timeScale === 'seconds') {
+    color = 'red';
+  }
+
+  return color;
+}
 
 function spinnerAnimation(secondsleft, key){
   $('.'+key+'spinner').css('animation', 'ease '+secondsleft+' linear infinite');
@@ -129,30 +176,12 @@ $('.submitCastInfo').click(function(){
       var lat = (event.latLng).k
       var lng = (event.latLng).D
       setMarker(lat,lng);
+      refreshExpirationStyles();
     });
   } else {
 
   }
 });
-
-  // var image = {
-  //   url: 'https://dl.dropboxusercontent.com/u/27160305/img/cast.png',
-  //   // This marker is 20 pixels wide by 32 pixels tall.
-  //   size: new google.maps.Size(157, 164),
-  //   // The origin for this image is 0,0.
-  //   origin: new google.maps.Point(0,0),
-  //   // The anchor for this image is the base of the flagpole at 0,32.
-  //   anchor: new google.maps.Point(78.5, 164)
-  // };
-  // console.log(image.url);
-
-  // var shape = {
-  //     coords: [1, 1, 1, 20, 18, 20, 18 , 1],
-  //     type: 'poly'
-  // };
-
-//google.maps.event.addDomListener(window, 'load', initialize);
-
 
 //////////////////////////////////////////////////////////////
 ///////////////////// Navigation //////////////////////////
@@ -241,7 +270,7 @@ function addCircle(){
     existingDivs.push(c);
   });
 
-  var $circleContainer = $('<div class="circleContainer"></div>')
+  var $circleContainer = $('<div class="circleContainer"></div>');
     $circleContainer.css("display", "inline-block");
     $circleContainer.css("background-color", "white");
     $circleContainer.css("width", circleContainerWidth);
@@ -288,82 +317,82 @@ var preview = document.getElementById('preview');
 
 
 circleIcon.addEventListener('change', function(e) {
-      var file = circleIcon.files[0];
-      var imageType = /image.*/;
+  var file = circleIcon.files[0];
+  var imageType = /image.*/;
 
-      if (file.type.match(imageType)) {
-        var reader = new FileReader();
+  if (file.type.match(imageType)) {
+    var reader = new FileReader();
 
-        reader.onload = function(e) {
-          circleIconDisplayArea.innerHTML = "";
+    reader.onload = function(e) {
+      circleIconDisplayArea.innerHTML = "";
 
-          var img = new Image();
-          img.src = reader.result;
+      var img = new Image();
+      img.src = reader.result;
 
-          circleIconDisplayArea.appendChild(img);
+      circleIconDisplayArea.appendChild(img);
 
-          var imgPreview = new Image();
-          imgPreview.src = reader.result;
-          $('#preview').append(imgPreview);
+      var imgPreview = new Image();
+      imgPreview.src = reader.result;
+      $('#preview').append(imgPreview);
 
-          //Create variables (in this scope) to hold the API and image size
-          var jcrop_api,
-              boundx,
-              boundy,
+      //Create variables (in this scope) to hold the API and image size
+      var jcrop_api,
+          boundx,
+          boundy,
 
-              // Grab some information about the preview pane
-              $preview = $('.preview-container'),
-              $pcnt = $('.preview-container #preview'),
-              $pimg = $('.preview-container #preview img'),
+          // Grab some information about the preview pane
+          $preview = $('.preview-container'),
+          $pcnt = $('.preview-container #preview'),
+          $pimg = $('.preview-container #preview img'),
 
-              xsize = $pcnt.width(),
-              ysize = $pcnt.height();
-          
-          console.log('init',[xsize,ysize]);
-          $(circleIconDisplayArea).Jcrop({
-            onChange: updatePreview,
-            onSelect: updatePreview,
-            aspectRatio: xsize / ysize
-          },function(){
-            // Use the API to get the real image size
-            var bounds = this.getBounds();
-            boundx = bounds[0];
-            boundy = bounds[1];
-            // Store the API in the jcrop_api variable
-            jcrop_api = this;
+          xsize = $pcnt.width(),
+          ysize = $pcnt.height();
+      
+      console.log('init',[xsize,ysize]);
+      $(circleIconDisplayArea).Jcrop({
+        onChange: updatePreview,
+        onSelect: updatePreview,
+        aspectRatio: xsize / ysize
+      },function(){
+        // Use the API to get the real image size
+        var bounds = this.getBounds();
+        boundx = bounds[0];
+        boundy = bounds[1];
+        // Store the API in the jcrop_api variable
+        jcrop_api = this;
 
-            // Move the preview into the jcrop container for css positioning
-            $preview.appendTo(jcrop_api.ui.holder);
+        // Move the preview into the jcrop container for css positioning
+        $preview.appendTo(jcrop_api.ui.holder);
+      });
+
+      function updatePreview(c)
+      {
+        if (parseInt(c.w) > 0)
+        {
+          var rx = xsize / c.w;
+          var ry = ysize / c.h;
+
+          $pimg.css({
+            width: Math.round(rx * boundx) + 'px',
+            height: Math.round(ry * boundy) + 'px',
+            marginLeft: '-' + Math.round(rx * c.x) + 'px',
+            marginTop: '-' + Math.round(ry * c.y) + 'px'
           });
-
-          function updatePreview(c)
-          {
-            if (parseInt(c.w) > 0)
-            {
-              var rx = xsize / c.w;
-              var ry = ysize / c.h;
-
-              $pimg.css({
-                width: Math.round(rx * boundx) + 'px',
-                height: Math.round(ry * boundy) + 'px',
-                marginLeft: '-' + Math.round(rx * c.x) + 'px',
-                marginTop: '-' + Math.round(ry * c.y) + 'px'
-              });
-            }
-          };
-          
-          $(circleIcon).css('display', 'none');
-          $(circleIconDisplayArea).css('border', '2px solid white');
-          $('.createCircleInputs').css('margin-top', '200px');
-          $('.preview-container').css('display', 'block');
         }
+      };
+      
+      $(circleIcon).css('display', 'none');
+      $(circleIconDisplayArea).css('border', '2px solid white');
+      $('.createCircleInputs').css('margin-top', '200px');
+      $('.preview-container').css('display', 'block');
+    }
 
-        reader.readAsDataURL(file);
-      } 
+    reader.readAsDataURL(file);
+  } 
 
-      else {
-        circleIconDisplayArea.innerHTML = "File not supported!"
-      }
+  else {
+    circleIconDisplayArea.innerHTML = "File not supported!"
+  }
 });
 
 
