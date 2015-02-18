@@ -1,0 +1,83 @@
+
+// Icon Styling
+
+.icon {
+  width: $iconSize;
+  transition: width 0.5s ease;
+  -webkit-transition: width 0.3s ease;
+  -moz-transition: width 0.3s ease;
+  height: $iconSize;
+  border: 1px solid black;
+  border-radius: $iconSize;
+  background-color: grey;
+  position: absolute;
+  z-index: 200;
+  margin-left: -($iconSize/2);
+  margin-top: -($iconSize/2);
+  opacity: 0.8;
+}
+
+
+// Timer Styling
+
+// @mixin timer($item, $duration, $size, $color, $border, $hover: running) {
+//   #{$item}, #{$item} * {  }
+
+//   #{$item} { 
+//     width: $size;
+//     height: $size;
+//   }
+
+//   #{$item} .pie {
+//     width: 50%;
+//     height: 100%;
+//     transform-origin: 100% 50%;
+//     position: absolute;
+//     background: $color;
+//     border: #{$border};
+//   }
+
+//   #{$item} .spinner {
+//     border-radius: 100% 0 0 100% / 50% 0 0 50%;
+//     z-index: 200;
+//     border-right: none;
+//     -webkit-animation: rota $duration + s linear infinite;
+//   }
+
+//   #{$item}:hover .spinner,
+//   #{$item}:hover .filler, 
+//   #{$item}:hover .mask {
+//     -webkit-animation-play-state: $hover;    
+//   }
+
+//   #{$item} .filler {
+//     border-radius: 0 100% 100% 0 / 0 50% 50% 0; 
+//     left: 50%;
+//     opacity: 0;
+//     z-index: 100;
+//     -webkit-animation: opa $duration + s steps(1,end) infinite reverse;
+//     border-left: none;
+//   }
+
+//   #{$item} .mask {
+//     width: 50%;
+//     height: 100%;
+//     position: absolute;
+//     background: inherit;
+//     opacity: 1;
+//     z-index: 300;
+//     -webkit-animation: opa $duration + s steps(1,end) infinite;
+//   }
+
+//   @keyframes rota {
+//     0% { -webkit-transform: rotate(0deg); }
+//     100% { -webkit-transform: rotate(360deg); }
+//   }
+
+//   @keyframes opa {
+//     0% { opacity: 1; }
+//     50%, 100% { opacity: 0; }
+//   }
+// }
+
+// @include timer('.timer', 5, 30px, #08C, '5px solid rgba(0,0,0,0.5)');

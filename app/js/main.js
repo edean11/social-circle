@@ -38,16 +38,16 @@ var map = new google.maps.Map(document.getElementById('map-canvas'),
 
 var iconCounter = 0;
 
-function createCastInfo(key){
+function createCastInfo(){
   var $castTitle = $('#castTitle');
   var $castMessageText = $('#castMessageText');
   var $expirationDate = $('#datetimepicker');
   var $castAttachment = $('#castAttachment');
   var $castGroups = $('.castGroups');
 
-  var castInfo = {key: {'title': $castTitle.val(), 'text': $castMessageText.val(),
+  var castInfo =  {'title': $castTitle.val(), 'text': $castMessageText.val(),
                   'expiration': $expirationDate.val(), 'attachments': $castAttachment.files,
-                  'groups': $castGroups.val()}}
+                  'groups': $castGroups.val()}
 
   return castInfo;
 }
@@ -55,20 +55,66 @@ function createCastInfo(key){
 function setMarker(lat, longt) {
 
   var position = new google.maps.LatLng(lat, longt);
-  var castInfo = createCastInfo(iconCounter);
+  var castInfo = createCastInfo();
 
-  var marker = new google.maps.Marker({
+  var marker = new RichMarker({
       position: position,
       map: map,
-      //icon: image,
-      //shape: shape,
-      title: castInfo.key.title,
+      draggable: true,
+      content: createCircleTimer(iconCounter),
+      title: castInfo.title,
       zIndex: iconCounter+1
   });
-  marker.set('id', 'icon'+iconCounter);
 
+  marker.set('id', iconCounter+'icon');
+  google.maps.event.addListener(marker, 'click', function(event){
+    if($('.'+this.id).width()===40){
+      $('.'+this.id).width('140px');
+      console.log($('.'+this.id).width())
+    } else {
+      console.log($('.'+this.id).width())
+      $('.'+this.id).width('40px');
+    }
+  });
   iconCounter++;
+  //spinnerAnimation('100s', iconCounter);
+
 }
+
+function createCircleTimer(key) {
+  // var spinner = '<div class="'+key+'spinner pie spinner"></div>',
+  //     filler = '<div class="'+key+'filler pie filler"></div>',
+  //     mask = '<div class="'+key+'mask mask"></div>';
+  // var castContainer = '<div class="timerContainer '+key+'timer timer">'+spinner+filler+mask+'</div>';
+  var castInfo = createCastInfo();
+  var imgSrc = '';
+  var iconPic = '<img class="iconPic '+key+'iconPic" src="#"></img>';
+  var castContainer = '<div class="icon '+key+'icon"></div>';
+  console.log(castContainer);
+
+  return castContainer;
+}
+
+// function createCircleTimer(key, expiration) {
+//   var tIndex = expiration.indexOf('T');
+//   var expirationLength = expiration.length;
+//   var formattedExpiration = expiration.substr(0,tIndex)+' '+expiration.substr(tIndex+1,expirationLength-1);
+//   var $timeCircle = '<div class="'+key+'icon icon" data-date="'+formattedExpiration+'"></div>';
+//   console.log($timeCircle);
+//   $('.'+key+'icon').TimeCircles();
+//   return $timeCircle;
+// }
+
+function spinnerAnimation(secondsleft, key){
+  $('.'+key+'spinner').css('animation', 'ease '+secondsleft+' linear infinite');
+  $('.'+key+'filler').css('animation', 'ease '+secondsleft+' steps(1, end) infinite');
+  $('.'+key+'mask').css('animation', 'ease '+secondsleft+' steps(1, end) infinite');
+  console.log($('.'+key+'spinner').css('animation'));
+  console.log($('.'+key+'filler').css('animation'));
+  console.log($('.'+key+'mask').css('animation'));
+  console.log('.'+key+'spinner');
+}
+
 
 $('.submitCastInfo').click(function(){
   var castMessageOverlay = $('.castMessageOverlay');
@@ -76,14 +122,13 @@ $('.submitCastInfo').click(function(){
   editOverlaySelect.css('height', 0);
   $castMessageButton.css('z-index', '3');
 
-  var test = $('#castPositionChoose').is(':checked');
-  console.log(test);
+  var overlay;
 
   if($('#castPositionChoose').is(':checked')) {
     google.maps.event.addListenerOnce(map, 'click', function(event) {
       var lat = (event.latLng).k
       var lng = (event.latLng).D
-      setMarker(lat, lng);
+      setMarker(lat,lng);
     });
   } else {
 
