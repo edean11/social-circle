@@ -1,0 +1,46 @@
+
+.loggedIn {
+	text-align: center;
+	width: 80%;
+	margin: 30px auto;
+	background-color: white;
+	color: black;
+	margin-bottom: 30px;
+	border: 4px solid $background-black;
+	border-radius: 10px;
+
+	h6 {
+		background-color: $background-grey;
+		color: black;
+		border-top: 2px solid $background-black;
+		border-bottom: 2px solid $background-black;
+
+		&:first-child {
+			border-top: none;
+		}
+	}
+
+	.profileButton {
+		display: block;
+		margin: 10px auto;
+		width: 200px;
+		color: black;
+		background-color: white;
+
+		&:hover {
+			background-color: $background-black;
+			color: white;
+		}
+	}
+
+	.profileButtons {
+		background-color: $background-grey;
+		padding: 10px 0;
+		border-top: 4px solid $background-black;
+	}
+
+	.avatarInput {
+		width: 200px;
+		margin: 5px auto 10px;
+	}
+}

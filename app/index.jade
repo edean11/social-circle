@@ -15,6 +15,54 @@ html(lang="en-US")
       
     header
       img(src="img/thesocialcircle.png", alt="Logo", title="The Social Circle")
+    .login.hidden
+      h4 Please Login or Register
+      form
+        label Enter Email
+        input.emailInput(type='text', name='email', placeholder='Email', required='required')
+        label Enter Password
+        input.userPasswordInput(type='password', name='password', placeholder='Password' required='required')
+        button.register Register
+        input.loginButton(type='submit', name='login', value='Login')
+    .loggedIn.hidden
+        h6 User Avatar
+        input.avatarInput(type='file', name='avatar', required='required')
+        h6 User Name
+        input.userNameInput(type='text', name='user', placeholder='User01', required='required')
+        h6 Default Cast Position
+        label Current Location 
+          input(type="radio" name="userdefaultcastposition" value="current location" checked)#userDefaultCastPositionCurrent
+        label Choose Location 
+          input(type="radio" name="userdefaultcastposition" value="choose location")#userDefaultCastPositionChoose
+        h6 Default Chat Background Color
+        select.defaultChatBackgroundColor
+          option(selected) White
+          option Black
+          option Red 
+          option Blue
+          option Yellow
+          option Green
+          option Purple
+          option Grey
+          option Orange
+          option Indigo
+        h6 Default Chat Text Color
+        select.defaultChatBackgroundColor
+          option White
+          option(selected) Black
+          option Red 
+          option Blue
+          option Yellow
+          option Green
+          option Purple
+          option Grey
+          option Orange
+          option Indigo
+        .profileButtons
+          button.saveProfile.profileButton.
+            Save
+          button.resetProfile.profileButton.
+            Reset
     .container
       .map-container
         .editOverlay
@@ -53,7 +101,7 @@ html(lang="en-US")
               .row
                 .six.columns
                   button.resetCastInfo.
-                    Reset 
+                    Cancel 
                 .six.columns
                   button.submitCastInfo.submitButton.
                     Broadcast
@@ -133,6 +181,7 @@ html(lang="en-US")
           .timeCircle-container
 
     script(src="vendor/jquery/dist/jquery.min.js")
+    script(src="vendor/firebase/firebase.js")
     script(src="vendor/jcrop/js/jquery.Jcrop.min.js")
     script(src="vendor/lodash/lodash.min.js")
     script(src="vendor/moment/moment.js")

@@ -1,3 +1,79 @@
+////////////////////////
+// Selector variables //
+////////////////////////
+
+var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
+    fb           = new Firebase(FIREBASE_URL);
+
+
+////////////////////////////////
+// Login/Logout Functionality //
+////////////////////////////////
+
+
+  $('.register').click(function(event){
+    event.preventDefault();
+    var $form = $($(this).closest('form')),
+        email = $form.find('[type="text"]').val(),
+        pass = $form.find('[type="password"]').val();
+    fb.createUser({
+        email: email,
+        password: pass
+      },
+      function(err){
+        if(!err){
+              fb.authWithPassword({
+                email: email,
+                password: pass
+              },
+                function(err, auth){
+                    location.reload(true);
+              }
+            );
+        } else {}
+      }
+    );
+
+  });
+
+  $('.loginButton').click(function(event){
+    event.preventDefault();
+
+    var $form = $($(this).closest('form')),
+        email = $form.find('[type="text"]').val(),
+        pass = $form.find('[type="password"]').val();
+
+    fb.authWithPassword({
+      email    : email,
+      password : pass
+      }, function(error, authData) {
+      if (error) {
+        console.log("Login Failed!", error);
+      } else {
+        location.reload(true);
+        console.log("Authenticated successfully with payload:", authData);
+      }
+    });
+  });
+
+  //if authenticated, go to app page
+
+  fb.child('users').once('value', function(snap){
+    function profile() {
+         if(snap.val()[fb.getAuth().uid]){
+            return true
+         } else { return undefined }
+    }
+    if (fb.getAuth()&&profile()) {
+      $('.login').toggleClass('hidden');
+      $('.app').toggleClass('hidden');
+      getAndCreateProfile();
+    } else if (fb.getAuth()) {
+      $('.login').toggleClass('hidden');
+      $('.loggedIn').toggleClass('hidden');
+    }
+  });
+
 
 // DOM Element Grab
 
@@ -166,6 +242,7 @@ function spinnerAnimation(secondsleft, key){
 $('.submitCastInfo').click(function(){
   var castMessageOverlay = $('.castMessageOverlay');
   castMessageOverlay.css('display', 'none');
+  editOverlaySelect.css('border', 'none');
   editOverlaySelect.css('height', 0);
   $castMessageButton.css('z-index', '3');
 
@@ -195,6 +272,7 @@ $('.submitCastInfo').click(function(){
 $castMessageButton.on("click", function(){
 
     editOverlaySelect.css('height', mapContainerHeight);
+    editOverlaySelect.css('border', '2px solid black');
     var castMessageOverlay = $('.castMessageOverlay');
     castMessageOverlay.css('display', 'inline-block');
     $castMessageButton.css('z-index', '10');
@@ -206,12 +284,14 @@ $searchButton.on("click", function(){
     var mapContainerHeight = $('.map-container').height();
     var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', mapContainerHeight);
+    editOverlaySelect.css('border', '2px solid black');
     var searchOverlay = $('.searchOverlay');
     searchOverlay.css('display', 'inline-block');
     $searchButton.css('z-index', '10');
 
     $('.submitSearchButton').click(function(){
       searchOverlay.css('display', 'none');
+      editOverlaySelect.css('border', 'none');
       editOverlaySelect.css('height', 0);
       $searchButton.css('z-index', '3');
     });
@@ -223,6 +303,7 @@ $createCircleButton.on("click", function(){
     var mapContainerHeight = $('.map-container').height();
     var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', mapContainerHeight);
+    editOverlaySelect.css('border', '2px solid black');
     var createCircleOverlay = $('.createCircleOverlay');
     createCircleOverlay.css('display', 'inline-block');
     $createCircleButton.css('z-index', '10');
@@ -230,6 +311,7 @@ $createCircleButton.on("click", function(){
     $('.clearButton').click(function(){
       createCircleOverlay.css('display', 'none');
       editOverlaySelect.css('height', 0);
+      editOverlaySelect.css('border', 'none');
       $createCircleButton.css('z-index', '3');
     });
 
@@ -240,6 +322,7 @@ $settingsButton.on("click", function(){
     var mapContainerHeight = $('.map-container').height();
     var editOverlaySelect = $('.editOverlay');
     editOverlaySelect.css('height', mapContainerHeight);
+    editOverlaySelect.css('border', '2px solid black');
     var settingsOverlay = $('.settingsOverlay');
     settingsOverlay.css('display', 'inline-block');
     $settingsButton.css('z-index', '10');
@@ -247,6 +330,7 @@ $settingsButton.on("click", function(){
     $('.saveSettingsButton').click(function(){
       settingsOverlay.css('display', 'none');
       editOverlaySelect.css('height', 0);
+      editOverlaySelect.css('border', 'none');
       $settingsButton.css('z-index', '3');
     });
 
@@ -272,7 +356,7 @@ function addCircle(){
 
   var $circleContainer = $('<div class="circleContainer"></div>');
     $circleContainer.css("display", "inline-block");
-    $circleContainer.css("background-color", "white");
+    $circleContainer.css("background-color", "#4D4D4D");
     $circleContainer.css("width", circleContainerWidth);
     $circleContainer.css("height", circleContainerHeight);
     $circleContainer.css("margin", "5px");

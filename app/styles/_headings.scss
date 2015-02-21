@@ -2,10 +2,11 @@
 header {
 	text-align: center;
 	padding: 20px 0;
+	background-color: $background-black;
+	border-bottom: 4px solid black;
 
 	img {
 		width: 70%;
 		padding-bottom: 10px;
-		border-bottom: 1px solid lightgrey;
 	}
 }
