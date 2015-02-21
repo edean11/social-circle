@@ -10,7 +10,7 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
 // Login/Logout Functionality //
 ////////////////////////////////
 
-
+// On register button click, register and login the user
   $('.register').click(function(event){
     event.preventDefault();
     var $form = $($(this).closest('form')),
@@ -36,6 +36,7 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
 
   });
 
+// On login button click, login the user
   $('.loginButton').click(function(event){
     event.preventDefault();
 
@@ -56,7 +57,8 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
     });
   });
 
-  //if authenticated, go to app page
+  //if logged in and has profile, go to app page
+  //if logged in without a profile, go to the profile page
 
   fb.child('users').once('value', function(snap){
     function profile() {
@@ -66,12 +68,36 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
     }
     if (fb.getAuth()&&profile()) {
       $('.login').toggleClass('hidden');
-      $('.app').toggleClass('hidden');
-      getAndCreateProfile();
+      $('.container').toggleClass('hidden');
     } else if (fb.getAuth()) {
       $('.login').toggleClass('hidden');
       $('.loggedIn').toggleClass('hidden');
     }
+  });
+
+  // Create User Profile Object
+
+  function createProfileObject(){
+    var $avatar = $('.avatarInput').val();
+    var $userNameInput = $('.userNameInput').val();
+    var $defaultCastLocation = $('input[name="userdefaultcastposition"]:checked').val();
+    var $defaultChatBackgroundColor = $('.defaultChatBackgroundColor option:selected').val();
+    var $defaultChatTextColor = $('.defaultChatTextColor option:selected').val();
+
+    var profileObject = {avatar: $avatar, username: $userNameInput, defaultCastLocation: $defaultCastLocation,
+                         defaultChatBackgroundColor: $defaultChatBackgroundColor, defaultChatTextColor: $defaultChatTextColor}
+    return profileObject;
+  }
+
+  function saveProfileObject(profileObject){
+    var uid = fb.getAuth().uid;
+    var profileUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/profile');
+    profileUrl.push(profileObject);
+  }
+
+  $('.saveProfile').click(function(){
+    var profile = createProfileObject();
+    saveProfileObject(profile);
   });
 
 
@@ -114,20 +140,33 @@ var map = new google.maps.Map(document.getElementById('map-canvas'),
 
 var iconCounter = 0;
 
+//Create Info to Create Cast With
 function createCastInfo(){
   var $castTitle = $('#castTitle');
   var $castMessageText = $('#castMessageText');
   var $expirationDate = $('#datetimepicker');
   var $castAttachment = $('#castAttachment');
-  var $castGroups = $('.castGroups');
+  var $castGroups = [];
+  $('.groupSelect input').each(function(){
+    $castGroups.push($(this).val());
+  });
+  console.log($('.groupSelect input'));
 
   var castInfo =  {'title': $castTitle.val(), 'text': $castMessageText.val(),
-                  'expiration': $expirationDate.val(), 'attachments': $castAttachment.files,
-                  'groups': $castGroups.val()}
+                  'expiration': $expirationDate.val(), 'attachments': $castAttachment.val(),
+                  'groups': $castGroups}
+  console.log($castGroups);
 
   return castInfo;
 }
 
+function saveCastInfo(castInfo){
+  var uid = fb.getAuth().uid;
+  var castUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/data/casts');
+  castUrl.push(castInfo);
+}
+
+//Set the cast onto the google maps object, add the width change listener to it
 function setMarker(lat, longt) {
 
   var position = new google.maps.LatLng(lat, longt);
@@ -143,33 +182,33 @@ function setMarker(lat, longt) {
   });
 
   marker.set('id', iconCounter);
+  saveCastInfo(castInfo);
   google.maps.event.addListener(marker, 'click', function(event){
     iconWidthChange(this);
   });
   iconCounter++;
-  //spinnerAnimation('100s', iconCounter);
 
 }
 
+//Cast Width Change Function
 function iconWidthChange(that) {
   if($('.'+that.id+'icon').width()===40){
     $('.'+that.id+'icon').width('180px');
     $('.'+that.id+'icon').css('padding-left', '8px');
     $('.'+that.id+'iconTitle').css('display', 'block');
     $('.'+that.id+'iconText').css('display', 'inline-block');
-    //$('.'+this.id+'iconExpiration').css('display', 'inline-block');
     timeCirclesCreate(that);
   } else {
     $('.'+that.id+'icon').width('40px');
     $('.'+that.id+'icon').css('padding-left', '0px');
     $('.'+that.id+'iconTitle').css('display', 'none');
     $('.'+that.id+'iconText').css('display', 'none');
-    //$('.'+this.id+'iconExpiration').css('display', 'none');
     var $timeCircleContainer = $('.timeCircle-container');
     $timeCircleContainer.empty();  
   }
 }
 
+//Create Time Circles Object to append to footer on click of cast
 function timeCirclesCreate(thatother) {
   var $timeCircleContainer = $('.timeCircle-container');
   var expiration = $('.'+thatother.id+'iconExpiration').text();
@@ -178,6 +217,7 @@ function timeCirclesCreate(thatother) {
   $('.timeCircle'+thatother.id).TimeCircles();
 }
 
+//Create Cast DOM Elements for Appending
 function createCircleIcon(key) {
   var castInfo = createCastInfo();
   var imgSrc = '';
@@ -194,6 +234,7 @@ function createCircleIcon(key) {
   return castContainer;
 }
 
+// Refresh Expiration Border Colors
 function refreshExpirationStyles(){
   var $icons = $('.icon');
   for(i=0;i<$icons.length;i++){
@@ -203,6 +244,7 @@ function refreshExpirationStyles(){
   }
 }
 
+// Finds the Proper Expiration Color Based On Timeleft
 function expirationColor(expiration){
   var expirationFormatted = moment(expiration).format();
   var now = moment();
@@ -228,17 +270,6 @@ function expirationColor(expiration){
   return color;
 }
 
-function spinnerAnimation(secondsleft, key){
-  $('.'+key+'spinner').css('animation', 'ease '+secondsleft+' linear infinite');
-  $('.'+key+'filler').css('animation', 'ease '+secondsleft+' steps(1, end) infinite');
-  $('.'+key+'mask').css('animation', 'ease '+secondsleft+' steps(1, end) infinite');
-  console.log($('.'+key+'spinner').css('animation'));
-  console.log($('.'+key+'filler').css('animation'));
-  console.log($('.'+key+'mask').css('animation'));
-  console.log('.'+key+'spinner');
-}
-
-
 $('.submitCastInfo').click(function(){
   var castMessageOverlay = $('.castMessageOverlay');
   castMessageOverlay.css('display', 'none');
@@ -253,6 +284,7 @@ $('.submitCastInfo').click(function(){
       var lat = (event.latLng).k
       var lng = (event.latLng).D
       setMarker(lat,lng);
+
       refreshExpirationStyles();
     });
   } else {
@@ -271,7 +303,7 @@ $('.submitCastInfo').click(function(){
 
 $castMessageButton.on("click", function(){
 
-    editOverlaySelect.css('height', mapContainerHeight);
+    editOverlaySelect.css('height', $('.map-container').height());
     editOverlaySelect.css('border', '2px solid black');
     var castMessageOverlay = $('.castMessageOverlay');
     castMessageOverlay.css('display', 'inline-block');

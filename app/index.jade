@@ -15,7 +15,7 @@ html(lang="en-US")
       
     header
       img(src="img/thesocialcircle.png", alt="Logo", title="The Social Circle")
-    .login.hidden
+    .login
       h4 Please Login or Register
       form
         label Enter Email
@@ -47,7 +47,7 @@ html(lang="en-US")
           option Orange
           option Indigo
         h6 Default Chat Text Color
-        select.defaultChatBackgroundColor
+        select.defaultChatTextColor
           option White
           option(selected) Black
           option Red 
@@ -63,7 +63,7 @@ html(lang="en-US")
             Save
           button.resetProfile.profileButton.
             Reset
-    .container
+    .container.hidden
       .map-container
         .editOverlay
           .castMessageOverlay
