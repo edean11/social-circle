@@ -120,7 +120,7 @@ var editOverlaySelect = $('.editOverlay');
 
 var mapOptions = {
   zoom: 10,
-  center: new google.maps.LatLng(-33.9, 151.2),
+  center: new google.maps.LatLng(36.12469, -86.7259406),
   disableDefaultUI: true,
   scrollwheel: true,
   navigationControl: false,
@@ -141,21 +141,21 @@ var map = new google.maps.Map(document.getElementById('map-canvas'),
 var iconCounter = 0;
 
 //Create Info to Create Cast With
-function createCastInfo(){
+function createCastInfo(position){
   var $castTitle = $('#castTitle');
   var $castMessageText = $('#castMessageText');
   var $expirationDate = $('#datetimepicker');
   var $castAttachment = $('#castAttachment');
   var $castGroups = [];
-  $('.groupSelect input').each(function(){
-    $castGroups.push($(this).val());
+  $('.groupSelect input:checked').each(function(){
+    $castGroups.push($(this).attr('name'));
+    console.log(this);
   });
-  console.log($('.groupSelect input'));
+  var $position = position;
 
   var castInfo =  {'title': $castTitle.val(), 'text': $castMessageText.val(),
                   'expiration': $expirationDate.val(), 'attachments': $castAttachment.val(),
-                  'groups': $castGroups}
-  console.log($castGroups);
+                  'groups': $castGroups, 'position': $position}
 
   return castInfo;
 }
@@ -170,7 +170,7 @@ function saveCastInfo(castInfo){
 function setMarker(lat, longt) {
 
   var position = new google.maps.LatLng(lat, longt);
-  var castInfo = createCastInfo();
+  var castInfo = createCastInfo(position);
 
   var marker = new RichMarker({
       position: position,
@@ -185,6 +185,7 @@ function setMarker(lat, longt) {
   saveCastInfo(castInfo);
   google.maps.event.addListener(marker, 'click', function(event){
     iconWidthChange(this);
+    refreshExpirationStyles();
   });
   iconCounter++;
 
@@ -211,6 +212,8 @@ function iconWidthChange(that) {
 //Create Time Circles Object to append to footer on click of cast
 function timeCirclesCreate(thatother) {
   var $timeCircleContainer = $('.timeCircle-container');
+  var $timeCircleTitle = $('<p class="'+thatother.id+'timeCircleTimerTitle timeCircleTimerTitle">'+thatother.title+'</p>');
+  $timeCircleContainer.append($timeCircleTitle);
   var expiration = $('.'+thatother.id+'iconExpiration').text();
   var $timeCircle = $('<div class="timeCircle timeCircle'+thatother.id+'" data-date="'+expiration+'"></div>');
   $timeCircleContainer.append($timeCircle);
@@ -230,7 +233,6 @@ function createCircleIcon(key) {
   var formattedExpiration = expiration.substr(0,tIndex)+' '+expiration.substr(tIndex+1,expirationLength-1);
   var iconExpiration = '<p class="iconExpiration '+key+'iconExpiration">'+formattedExpiration+'</p>'
   var castContainer = '<div class="icon '+key+'icon">'+iconTitle+iconText+iconExpiration+'</div>';
-
   return castContainer;
 }
 
@@ -270,26 +272,73 @@ function expirationColor(expiration){
   return color;
 }
 
-$('.submitCastInfo').click(function(){
+// Broadcast and Setup Cast - Set Click Event
+
+function clearCastMessage(){
   var castMessageOverlay = $('.castMessageOverlay');
   castMessageOverlay.css('display', 'none');
   editOverlaySelect.css('border', 'none');
   editOverlaySelect.css('height', 0);
   $castMessageButton.css('z-index', '3');
+}
+
+
+// Submit Cast Info Click Event
+$('.submitCastInfo').click(function(){
+  var $castAddInfoContainer = $('.castAddInfoContainer');
+  clearCastMessage();
+  addCastInfoBox();
 
   var overlay;
 
   if($('#castPositionChoose').is(':checked')) {
     google.maps.event.addListenerOnce(map, 'click', function(event) {
+      $castAddInfoContainer.empty();
       var lat = (event.latLng).k
       var lng = (event.latLng).D
       setMarker(lat,lng);
-
       refreshExpirationStyles();
     });
-  } else {
-
+  } else if($('#castPositionCurrent').is(':checked')) {
+    google.maps.event.addListenerOnce(map, 'click', function(event) {
+      $castAddInfoContainer.empty();
+      getLocation();
+      refreshExpirationStyles();
+    });
   }
+});
+
+// Add Cast Info Box
+function addCastInfoBox(){
+  var $castInfoBoxContainer = $('<div class="castInfoBoxContainer"></div>');
+  var $castInfoBoxText = $('<p class="castInfoBoxText">Click on the Map Above to Place Your Cast Message</p>');
+  $castInfoBoxContainer.append($castInfoBoxText);
+  var $castAddInfoContainer = $('.castAddInfoContainer');
+  $castAddInfoContainer.append($castInfoBoxContainer);
+}
+
+// Geolocation API call
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    alert("Geolocation is not supported by this browser.");
+  }
+}
+
+function showPosition(position) {
+  var lat = position.coords.latitude;
+  var lng = position.coords.longitude;
+  setMarker(lat,lng);
+  console.log(lat,lng);
+  map.setCenter(new google.maps.LatLng(lat, lng));
+}
+
+//Reset Cast Info and Close Div
+$('.resetCastInfo').click(function(){
+  clearCastMessage();
+
 });
 
 //////////////////////////////////////////////////////////////

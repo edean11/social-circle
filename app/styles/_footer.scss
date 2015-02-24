@@ -4,11 +4,27 @@
 	.addRemoveButtons {
 		width: 20px;
 	}
+	.castAddInfoContainer {
+		text-align: center;
+		width: 300px;
+		margin: 0 auto;
+		.castInfoBoxText {
+			font-size: 1.4em;
+			font-weight: bold;
+		}
+	}
 
 	.footerCircle-container {
 		text-align: center;
 
 		.timeCircle-container {
+
+			p {
+				margin: 5px;
+				border: 4px solid black;
+				background-color: $background-black;
+				color: white;
+			}
 			.timeCircle {
 				width: 70%;
 				margin: 0 auto;

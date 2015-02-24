@@ -12,7 +12,7 @@ html(lang="en-US")
 
   body
     // [if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]
-      
+
     header
       img(src="img/thesocialcircle.png", alt="Logo", title="The Social Circle")
     .login
@@ -82,17 +82,17 @@ html(lang="en-US")
                   .groupSelect
                     h6 Cast Message to...
                     label Group
-                      input(type="checkbox" label="Example Group").castGroups
+                      input(type="checkbox" name="Group1").castGroups
                     label Group
-                      input(type="checkbox" label="Example Group").castGroups
+                      input(type="checkbox" name="Group2").castGroups
                     label Group
-                      input(type="checkbox" label="Example Group").castGroups
+                      input(type="checkbox" name="Group3").castGroups
                     label Group
-                      input(type="checkbox" label="Example Group").castGroups
+                      input(type="checkbox" name="Group4").castGroups
                     label Group
-                      input(type="checkbox" label="Example Group").castGroups
+                      input(type="checkbox" name="Group5").castGroups
                     label Group
-                      input(type="checkbox" label="Example Group").castGroups
+                      input(type="checkbox" name="Group6").castGroups
                   label Current Location 
                     input(type="radio" name="castposition" value="current location" checked)#castPositionCurrent
                   label Choose Location 
@@ -177,6 +177,7 @@ html(lang="en-US")
       .footer-container
         img(src="img/addButton.png" alt="Add Circle" title="Add Circle")#addCircleButton.addRemoveButtons
         img(src="img/removeButton.png" alt="Remove Circle" title="Remove Circle")#removeCircleButton.addRemoveButtons
+        .castAddInfoContainer
         .footerCircle-container
           .timeCircle-container
 
