@@ -26,44 +26,51 @@ html(lang="en-US")
         input.loginButton(type='submit', name='login', value='Login')
     .loggedIn.hidden
         h6 User Avatar
-        input.avatarInput(type='file', name='avatar', required='required')
-        h6 User Name
-        input.userNameInput(type='text', name='user', placeholder='User01', required='required')
-        h6 Default Cast Position
-        label Current Location 
-          input(type="radio" name="userdefaultcastposition" value="current location" checked)#userDefaultCastPositionCurrent
-        label Choose Location 
-          input(type="radio" name="userdefaultcastposition" value="choose location")#userDefaultCastPositionChoose
-        h6 Default Chat Background Color
-        select.defaultChatBackgroundColor
-          option(selected) White
-          option Black
-          option Red 
-          option Blue
-          option Yellow
-          option Green
-          option Purple
-          option Grey
-          option Orange
-          option Indigo
-        h6 Default Chat Text Color
-        select.defaultChatTextColor
-          option White
-          option(selected) Black
-          option Red 
-          option Blue
-          option Yellow
-          option Green
-          option Purple
-          option Grey
-          option Orange
-          option Indigo
+        .avatarContainer
+          input.avatarInput#avatarInput(type='file', name='avatar', required='required')
+          .avatarResultContainer
+            #avatarDisplayArea
+          .avatarPreview-container
+            #avatarPreview
+        .profileOptions
+          h6 User Name
+          input.userNameInput(type='text', name='user', placeholder='User01', required='required')
+          h6 Default Cast Position
+          label Current Location
+            input(type="radio" name="userdefaultcastposition" value="current location" checked)#userDefaultCastPositionCurrent
+          label Choose Location
+            input(type="radio" name="userdefaultcastposition" value="choose location")#userDefaultCastPositionChoose
+          h6 Default Chat Background Color
+          select.defaultChatBackgroundColor
+            option(selected) White
+            option Black
+            option Red 
+            option Blue
+            option Yellow
+            option Green
+            option Purple
+            option Grey
+            option Orange
+            option Indigo
+          h6 Default Chat Text Color
+          select.defaultChatTextColor
+            option White
+            option(selected) Black
+            option Red 
+            option Blue
+            option Yellow
+            option Green
+            option Purple
+            option Grey
+            option Orange
+            option Indigo
         .profileButtons
           button.saveProfile.profileButton.
             Save
           button.resetProfile.profileButton.
             Reset
     .container.hidden
+      .test
       .map-container
         .editOverlay
           .castMessageOverlay
@@ -120,7 +127,7 @@ html(lang="en-US")
                 .six.columns
                   button.submitSearchButton.submitButton.
                     Search
-              
+
           .createCircleOverlay
             .createcircle-top
               h5 Circle Icon
@@ -189,4 +196,5 @@ html(lang="en-US")
     script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2qt90yavxyrmR6Ff61nUniGmLMi51AlY")
     script(src="js/richmarker.js")
     script(src="js/timeCircle.js")
+    script(src="js/FileReader.js")
     script(src="js/main.js")

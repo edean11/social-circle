@@ -1,7 +1,7 @@
 
 .loggedIn {
 	text-align: center;
-	width: 80%;
+	width: 99%;
 	margin: 30px auto;
 	background-color: white;
 	color: black;
@@ -18,6 +18,10 @@
 		&:first-child {
 			border-top: none;
 		}
+	}
+
+	.profileOptions {
+		border-top: 2px solid $background-black;
 	}
 
 	.profileButton {
@@ -39,8 +43,60 @@
 		border-top: 4px solid $background-black;
 	}
 
-	.avatarInput {
-		width: 200px;
-		margin: 5px auto 10px;
+	.avatarContainer {
+
+		.avatarInput {
+			width: 200px;
+			margin: 5px auto 10px;
+		}
+
+		.avatarResultContainer {
+			text-align: center;
+			margin: 10px auto;
+			max-width: 100%;
+
+			#avatarDisplayArea {
+				margin-top: 2em;
+	            width: 100%;
+	            overflow-x: auto;
+
+			    img {
+			      max-width: 100%;
+			    }
+			}
+		}
 	}
+
+	.avatarPreview-container {
+	  display: none;
+      position: absolute;
+      bottom: -180px;
+      left: 30%;
+      padding: 6px;
+
+      overflow: hidden;
+
+      // -webkit-border-radius: 50%;
+      // -moz-border-radius: 50%;
+      // border-radius: 50%;
+    }
+
+
+    /* The Javascript code will set the aspect ratio of the crop
+       area based on the size of the thumbnail preview,
+       specified here */
+    #avatarPreview {
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      border: 2px solid black;
+
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      border-radius: 50%;
+
+      -webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+      -moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+      box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    }
 }

@@ -75,19 +75,118 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
     }
   });
 
+/////////////////////////////////////////////////////////
+///////////////////// Profile ///////////////////////////
+////////////////////////////////////////////////////////
+
   // Create User Profile Object
 
-  function createProfileObject(){
-    var $avatar = $('.avatarInput').val();
+  function createProfileObject(image){
     var $userNameInput = $('.userNameInput').val();
     var $defaultCastLocation = $('input[name="userdefaultcastposition"]:checked').val();
     var $defaultChatBackgroundColor = $('.defaultChatBackgroundColor option:selected').val();
     var $defaultChatTextColor = $('.defaultChatTextColor option:selected').val();
 
-    var profileObject = {avatar: $avatar, username: $userNameInput, defaultCastLocation: $defaultCastLocation,
+    var profileObject = {avatar: image, username: $userNameInput, defaultCastLocation: $defaultCastLocation,
                          defaultChatBackgroundColor: $defaultChatBackgroundColor, defaultChatTextColor: $defaultChatTextColor}
     return profileObject;
   }
+
+  ///////// Get User Avatar //////////
+
+  var $avatarInput = $('.avatarInput');
+  var avatarImage = [];
+  var profOpts = {
+    // CSS Class to add to the drop element when a drag is active
+    dragClass: "draggingAvatar",
+
+    // A string to match MIME types, for instance
+    accept: 'image/*',
+    readAsMap: { },
+
+    // How to read any files not specified by readAsMap
+    readAsDefault: 'DataURL',
+    on: {
+      beforestart: function(e, file) {
+          // return false if you want to skip this file
+      },
+      loadstart: function(e, file) { /* Native ProgressEvent */ },
+      progress: function(e, file) { /* Native ProgressEvent */ },
+      load: function(e, file) { /* Native ProgressEvent */ },
+      error: function(e, file) { /* Native ProgressEvent */ },
+      loadend: function(e, file) { 
+        var type = '';
+        var d = e.target.result;
+        var imgURI = d.replace("data:;","data:"+type+";")
+        avatarImage.push(imgURI);
+        var avatarDisplay = document.getElementById('avatarDisplayArea')
+        var img = new Image();
+        img.src = imgURI;
+        avatarDisplay.appendChild(img);
+        $('.avatarInput').toggleClass('hidden');
+
+        var imgPreview = new Image();
+        imgPreview.src = imgURI;
+        $('#avatarPreview').append(imgPreview);
+
+        //Create variables (in this scope) to hold the API and image size
+        var jcrop_api,
+            boundx,
+            boundy,
+
+            // Grab some information about the preview pane
+            $preview = $('.avatarPreview-container'),
+            $pcnt = $('.avatarPreview-container #avatarPreview'),
+            $pimg = $('.avatarPreview-container #avatarPreview img'),
+
+            xsize = $pcnt.width(),
+            ysize = $pcnt.height();
+
+        console.log('init',[xsize,ysize]);
+        $(avatarDisplay).Jcrop({
+          onChange: updatePreview,
+          onSelect: updatePreview,
+          aspectRatio: xsize / ysize
+        },function(){
+          // Use the API to get the real image size
+          var bounds = this.getBounds();
+          boundx = bounds[0];
+          boundy = bounds[1];
+          // Store the API in the jcrop_api variable
+          jcrop_api = this;
+
+          // Move the preview into the jcrop container for css positioning
+          $preview.appendTo(jcrop_api.ui.holder);
+        });
+        function updatePreview(c) {
+          if (parseInt(c.w) > 0)
+          {
+            var rx = xsize / c.w;
+            var ry = ysize / c.h;
+
+            $pimg.css({
+              width: Math.round(rx * boundx) + 'px',
+              height: Math.round(ry * boundy) + 'px',
+              marginLeft: '-' + Math.round(rx * c.x) + 'px',
+              marginTop: '-' + Math.round(ry * c.y) + 'px'
+            });
+          }
+        };
+
+        var imgwidth = $('#avatarDisplayArea').width();
+        $('.avatarResultContainer').width(imgwidth);
+        $('.avatarPreview-container').css('display', 'block');
+        $('.profileOptions').css('margin-top', '200px');
+      },
+      abort: function(e, file) { /* Native ProgressEvent */ },
+      skip: function(e, file) {
+        // Called when a file is skipped.  This happens when:
+        //  1) A file doesn't match the accept option
+        //  2) false is returned in the beforestart callback
+      }
+    }
+  }
+  $('#avatarInput').fileReaderJS(profOpts);
 
   function saveProfileObject(profileObject){
     var uid = fb.getAuth().uid;
@@ -96,9 +195,30 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
   }
 
   $('.saveProfile').click(function(){
-    var profile = createProfileObject();
+    var profile = createProfileObject(avatarImage[0]);
     saveProfileObject(profile);
+    $('.loggedIn').toggleClass('hidden');
+    $('.container').toggleClass('hidden');
   });
+
+  function fbGetProfileAvatar(callback){
+    var uid = fb.getAuth().uid;
+    var profileUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/profile');
+    profileUrl.once('value', function(res){
+      var val = res.val();
+      var keys = _.keys(val);
+      var avatarUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/profile/'+keys[0]+'/avatar');
+      avatarUrl.once('value',function(avt){
+        var avatar = avt.val();
+        callback(avatar);
+      });
+    });
+  }
+
+  //change avatar width on window resize
+  $(window).resize(function() {
+  //update stuff
+});
 
 
 // DOM Element Grab
@@ -167,7 +287,7 @@ function saveCastInfo(castInfo){
 }
 
 //Set the cast onto the google maps object, add the width change listener to it
-function setMarker(lat, longt) {
+function setMarker(lat, longt, drag) {
 
   var position = new google.maps.LatLng(lat, longt);
   var castInfo = createCastInfo(position);
@@ -175,10 +295,11 @@ function setMarker(lat, longt) {
   var marker = new RichMarker({
       position: position,
       map: map,
-      draggable: true,
+      draggable: drag,
       content: createCircleIcon(iconCounter),
       title: castInfo.title,
-      zIndex: iconCounter+1
+      zIndex: iconCounter+1,
+      id: iconCounter
   });
 
   marker.set('id', iconCounter);
@@ -205,7 +326,7 @@ function iconWidthChange(that) {
     $('.'+that.id+'iconTitle').css('display', 'none');
     $('.'+that.id+'iconText').css('display', 'none');
     var $timeCircleContainer = $('.timeCircle-container');
-    $timeCircleContainer.empty();  
+    $timeCircleContainer.empty();
   }
 }
 
@@ -296,7 +417,7 @@ $('.submitCastInfo').click(function(){
       $castAddInfoContainer.empty();
       var lat = (event.latLng).k
       var lng = (event.latLng).D
-      setMarker(lat,lng);
+      setMarker(lat,lng, true);
       refreshExpirationStyles();
     });
   } else if($('#castPositionCurrent').is(':checked')) {
@@ -311,6 +432,13 @@ $('.submitCastInfo').click(function(){
 // Add Cast Info Box
 function addCastInfoBox(){
   var $castInfoBoxContainer = $('<div class="castInfoBoxContainer"></div>');
+  var $castInfoBoxButton = $('<button class="castInfoBoxButton">Set Position</button>');
+    $castInfoBoxButton.click(function(){
+      var $castAddInfoContainer = $('.castAddInfoContainer');
+      $castAddInfoContainer.empty();
+      map.setOptions({draggable: false});
+    })
+  $castInfoBoxContainer.append($castInfoBoxButton);
   var $castInfoBoxText = $('<p class="castInfoBoxText">Click on the Map Above to Place Your Cast Message</p>');
   $castInfoBoxContainer.append($castInfoBoxText);
   var $castAddInfoContainer = $('.castAddInfoContainer');
@@ -330,7 +458,7 @@ function getLocation() {
 function showPosition(position) {
   var lat = position.coords.latitude;
   var lng = position.coords.longitude;
-  setMarker(lat,lng);
+  setMarker(lat,lng, true);
   console.log(lat,lng);
   map.setCenter(new google.maps.LatLng(lat, lng));
 }
@@ -472,7 +600,6 @@ $removeCircleButton.on('click', function(){
 /////////////////// User Uploads ////////////////////////////
 ///////////////////////////////////////////////////////
 
-///////// Get User Avatar //////////
 
 ///////// Create Circle Icon //////////
 
@@ -512,7 +639,7 @@ circleIcon.addEventListener('change', function(e) {
 
           xsize = $pcnt.width(),
           ysize = $pcnt.height();
-      
+
       console.log('init',[xsize,ysize]);
       $(circleIconDisplayArea).Jcrop({
         onChange: updatePreview,
@@ -545,7 +672,7 @@ circleIcon.addEventListener('change', function(e) {
           });
         }
       };
-      
+
       $(circleIcon).css('display', 'none');
       $(circleIconDisplayArea).css('border', '2px solid white');
       $('.createCircleInputs').css('margin-top', '200px');
@@ -553,7 +680,7 @@ circleIcon.addEventListener('change', function(e) {
     }
 
     reader.readAsDataURL(file);
-  } 
+  }
 
   else {
     circleIconDisplayArea.innerHTML = "File not supported!"
