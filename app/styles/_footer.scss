@@ -30,6 +30,22 @@
 				margin: 0 auto;
 			}
 		}
+
+		.appendedCircleImage {
+			width: 75px;
+			height: 75px;
+			border-radius: 20%;
+		}
+
+		.appendedCircleName {
+			position: absolute;
+			margin-top: -60px;
+			margin-left: 10px;
+			font-size: 0.8em;
+			color: white;
+			width: 50px;
+			text-shadow: 2px 2px 2px #000;
+		}
 	}
 }
 

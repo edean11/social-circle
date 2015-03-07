@@ -69,6 +69,8 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
     if (fb.getAuth()&&profile()) {
       $('.login').toggleClass('hidden');
       $('.container').toggleClass('hidden');
+      getAndSetMyCastMarkers();
+      addCircles(addCircleIncrement, 'owned');
     } else if (fb.getAuth()) {
       $('.login').toggleClass('hidden');
       $('.loggedIn').toggleClass('hidden');
@@ -118,7 +120,7 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
         var type = '';
         var d = e.target.result;
         var imgURI = d.replace("data:;","data:"+type+";")
-        avatarImage.push(imgURI);
+        saveProfileClick(imgURI)
         var avatarDisplay = document.getElementById('avatarDisplayArea')
         var img = new Image();
         img.src = imgURI;
@@ -142,7 +144,6 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
             xsize = $pcnt.width(),
             ysize = $pcnt.height();
 
-        console.log('init',[xsize,ysize]);
         $(avatarDisplay).Jcrop({
           onChange: updatePreview,
           onSelect: updatePreview,
@@ -194,12 +195,20 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
     profileUrl.push(profileObject);
   }
 
-  $('.saveProfile').click(function(){
-    var profile = createProfileObject(avatarImage[0]);
-    saveProfileObject(profile);
-    $('.loggedIn').toggleClass('hidden');
-    $('.container').toggleClass('hidden');
-  });
+  function saveProfileClick(img){
+    $('.saveProfile').click(function(){
+      var avtImg = img;
+      var avtMarginLeft = $('.avatarPreview-container #avatarPreview img').css('margin-left');
+      var avtMarginTop = $('.avatarPreview-container #avatarPreview img').css('margin-top');
+      var avtImgWidth = $('.avatarPreview-container #avatarPreview img').css('width');
+      var avatar = {'url':avtImg,'width':avtImgWidth,'marginLeft':avtMarginLeft,'marginTop':avtMarginTop}
+      var profile = createProfileObject(avatar);
+      saveProfileObject(profile);
+      $('.loggedIn').toggleClass('hidden');
+      $('.container').toggleClass('hidden');
+      getAndSetMyCastMarkers();
+    });
+  }
 
   function fbGetProfileAvatar(callback){
     var uid = fb.getAuth().uid;
@@ -215,11 +224,10 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
     });
   }
 
-  //change avatar width on window resize
-  $(window).resize(function() {
-  //update stuff
-});
 
+///////////////////////////////////////////////////////////////////
+///////////////////// Google Maps ///////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 // DOM Element Grab
 
@@ -234,9 +242,7 @@ var $settingsButton = $('#settingsButton');
 var mapContainerHeight = $('.map-container').height();
 var editOverlaySelect = $('.editOverlay');
 
-///////////////////////////////////////////////////////////////////
-///////////////////// Google Maps ///////////////////////////
-//////////////////////////////////////////////////////////////////////
+// Map Options
 
 var mapOptions = {
   zoom: 10,
@@ -261,7 +267,7 @@ var map = new google.maps.Map(document.getElementById('map-canvas'),
 var iconCounter = 0;
 
 //Create Info to Create Cast With
-function createCastInfo(position){
+function createCastInfo(position, userImg){
   var $castTitle = $('#castTitle');
   var $castMessageText = $('#castMessageText');
   var $expirationDate = $('#datetimepicker');
@@ -269,13 +275,28 @@ function createCastInfo(position){
   var $castGroups = [];
   $('.groupSelect input:checked').each(function(){
     $castGroups.push($(this).attr('name'));
-    console.log(this);
   });
   var $position = position;
 
   var castInfo =  {'title': $castTitle.val(), 'text': $castMessageText.val(),
                   'expiration': $expirationDate.val(), 'attachments': $castAttachment.val(),
-                  'groups': $castGroups, 'position': $position}
+                  'groups': $castGroups, 'position': $position, 'image': userImg, 'id': ''};
+
+  return castInfo;
+}
+function fbCreateCastInfo(cast){
+  var castTitle = cast.title;
+  var castMessageText = cast.text;
+  var expirationDate = cast.expiration;
+  var castAttachments = cast.attachments;
+  var castGroups = cast.groups
+  var position = cast.position;
+  var castPic = cast.image;
+  var castId = cast.id;
+
+  var castInfo =  {'title': castTitle, 'text': castMessageText,
+                  'expiration': expirationDate, 'attachments': castAttachments,
+                  'groups': castGroups, 'position': position, 'image': castPic, 'id': castId}
 
   return castInfo;
 }
@@ -283,30 +304,55 @@ function createCastInfo(position){
 function saveCastInfo(castInfo){
   var uid = fb.getAuth().uid;
   var castUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/data/casts');
-  castUrl.push(castInfo);
+  var pushedCast = castUrl.push(castInfo);
+  var id = getId(pushedCast);
+  var idUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/data/casts/'+id+'/id');
+  idUrl.set(id);
+  return id;
+}
+
+function getId(pushReturnVal){
+  var array = pushReturnVal.path.w;
+  var idPos = array.length-1;
+  return array[idPos];
+}
+
+function getAndSetMyCastMarkers(){
+  var uid = fb.getAuth().uid;
+  var myCastsUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/data/casts');
+  myCastsUrl.once('value', function(res){
+      var casts = res.val();
+      _.forEach(casts, function(cast){
+        var key = (_.keys(cast))[0];
+        var lat = cast.position.k;
+        var lng = cast.position.D;
+        var castObj = fbCreateCastInfo(cast);
+        setMarker(lat,lng,false, castObj, key);
+      });
+  })
 }
 
 //Set the cast onto the google maps object, add the width change listener to it
-function setMarker(lat, longt, drag) {
+function setMarker(lat, longt, drag, castInfoObj, id) {
 
   var position = new google.maps.LatLng(lat, longt);
-  var castInfo = createCastInfo(position);
+  var castInfo = castInfoObj;
 
   var marker = new RichMarker({
       position: position,
       map: map,
       draggable: drag,
-      content: createCircleIcon(iconCounter),
+      content: createCircleIcon(iconCounter, castInfo),
       title: castInfo.title,
       zIndex: iconCounter+1,
-      id: iconCounter
+      id: id
   });
 
-  marker.set('id', iconCounter);
-  saveCastInfo(castInfo);
+  marker.set('id', id);
   google.maps.event.addListener(marker, 'click', function(event){
     iconWidthChange(this);
     refreshExpirationStyles();
+    // insert chat container change function here
   });
   iconCounter++;
 
@@ -316,13 +362,13 @@ function setMarker(lat, longt, drag) {
 function iconWidthChange(that) {
   if($('.'+that.id+'icon').width()===40){
     $('.'+that.id+'icon').width('180px');
-    $('.'+that.id+'icon').css('padding-left', '8px');
+    //$('.'+that.id+'icon').css('padding-left', '8px');
     $('.'+that.id+'iconTitle').css('display', 'block');
     $('.'+that.id+'iconText').css('display', 'inline-block');
     timeCirclesCreate(that);
   } else {
     $('.'+that.id+'icon').width('40px');
-    $('.'+that.id+'icon').css('padding-left', '0px');
+    //$('.'+that.id+'icon').css('padding-left', '0px');
     $('.'+that.id+'iconTitle').css('display', 'none');
     $('.'+that.id+'iconText').css('display', 'none');
     var $timeCircleContainer = $('.timeCircle-container');
@@ -342,10 +388,9 @@ function timeCirclesCreate(thatother) {
 }
 
 //Create Cast DOM Elements for Appending
-function createCircleIcon(key) {
-  var castInfo = createCastInfo();
-  var imgSrc = '';
-  var iconPic = '<img class="iconPic '+key+'iconPic" src="#"></img>';
+function createCircleIcon(key, castInfo) {
+  var imgSrc = castInfo.image;
+  var iconPic = '<div class="iconPic '+key+'iconPic"><img class="iconPicImage" src="'+imgSrc+'"></img></div>';
   var iconTitle = '<p class="iconTitle '+key+'iconTitle">'+castInfo.title+'</p>';
   var iconText = '<p class="iconText '+key+'iconText">'+castInfo.text+'</p>';
   var expiration = castInfo.expiration;
@@ -353,7 +398,7 @@ function createCircleIcon(key) {
   var expirationLength = expiration.length;
   var formattedExpiration = expiration.substr(0,tIndex)+' '+expiration.substr(tIndex+1,expirationLength-1);
   var iconExpiration = '<p class="iconExpiration '+key+'iconExpiration">'+formattedExpiration+'</p>'
-  var castContainer = '<div class="icon '+key+'icon">'+iconTitle+iconText+iconExpiration+'</div>';
+  var castContainer = '<div class="icon '+key+'icon">'+iconPic+'<div class="iconInfoHolder">'+iconTitle+iconText+iconExpiration+'</div></div>';
   return castContainer;
 }
 
@@ -361,7 +406,6 @@ function createCircleIcon(key) {
 function refreshExpirationStyles(){
   var $icons = $('.icon');
   for(i=0;i<$icons.length;i++){
-    console.log($($icons[i]).children('.iconExpiration').text());
     var color = expirationColor($($icons[i]).children('.iconExpiration').text());
     $($icons[i]).css('border-color', color);
   }
@@ -393,7 +437,9 @@ function expirationColor(expiration){
   return color;
 }
 
-// Broadcast and Setup Cast - Set Click Event
+/////--------------------------------------//////////
+// Broadcast and Setup Cast - Set Click Event ///////
+/////------------Top Left Icon-------------//////////
 
 function clearCastMessage(){
   var castMessageOverlay = $('.castMessageOverlay');
@@ -415,10 +461,23 @@ $('.submitCastInfo').click(function(){
   if($('#castPositionChoose').is(':checked')) {
     google.maps.event.addListenerOnce(map, 'click', function(event) {
       $castAddInfoContainer.empty();
-      var lat = (event.latLng).k
-      var lng = (event.latLng).D
-      setMarker(lat,lng, true);
-      refreshExpirationStyles();
+      var lat = (event.latLng).k;
+      var lng = (event.latLng).D;
+      var position = new google.maps.LatLng(lat, lng);
+      var uid = fb.getAuth().uid;
+      var profileUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/profile/')
+      profileUrl.once('value', function(profile){
+        var profileVal = profile.val();
+        var key = _.keys(profileVal)[0];
+        var avatarUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/profile/'+key+'/avatar/')
+          avatarUrl.once('value', function(avatar){
+            var avatarVal = avatar.val().url;
+            var castInfo = createCastInfo(position, avatarVal);
+            var id = saveCastInfo(castInfo);
+            setMarker(lat,lng, true, castInfo, id);
+            refreshExpirationStyles();
+          });
+      });
     });
   } else if($('#castPositionCurrent').is(':checked')) {
     google.maps.event.addListenerOnce(map, 'click', function(event) {
@@ -458,8 +517,10 @@ function getLocation() {
 function showPosition(position) {
   var lat = position.coords.latitude;
   var lng = position.coords.longitude;
-  setMarker(lat,lng, true);
-  console.log(lat,lng);
+  var position = new google.maps.LatLng(lat, lng);
+  var castInfo = createCastInfo(position);
+  setMarker(lat,lng, false, castInfo);
+  saveCastInfo(castInfo);
   map.setCenter(new google.maps.LatLng(lat, lng));
 }
 
@@ -517,6 +578,10 @@ $createCircleButton.on("click", function(){
     createCircleOverlay.css('display', 'inline-block');
     $createCircleButton.css('z-index', '10');
 
+    $('.submitCreateCircleButton').click(function(){
+
+    });
+
     $('.clearButton').click(function(){
       createCircleOverlay.css('display', 'none');
       editOverlaySelect.css('height', 0);
@@ -557,135 +622,181 @@ var circleContainerHeight = '75px';
 
 // Add Circle Function
 
-function addCircle(){
-    var existingDivs = [];
-  _.forEach($footer.children(), function(c){
-    existingDivs.push(c);
-  });
+var addCircleIncrement = 0;
 
-  var $circleContainer = $('<div class="circleContainer"></div>');
+function addCircles(id,subscriptionType){
+
+  fbGetCircles(subscriptionType,function(circleObj){
+    var $circleContainer = $('<div class="'+id+'circleContainer"></div>');
     $circleContainer.css("display", "inline-block");
-    $circleContainer.css("background-color", "#4D4D4D");
     $circleContainer.css("width", circleContainerWidth);
     $circleContainer.css("height", circleContainerHeight);
     $circleContainer.css("margin", "5px");
     $circleContainer.css("border", "4px solid black");
     $circleContainer.css("border-radius", "25%");
-  $circleAppender.append($circleContainer);
+    var $circleImage = $('<img class="appendedCircleImage" src="'+circleObj.avatar.url+'"></img>');
+    var $circleName = $('<p class="appendedCircleName">'+circleObj.name+'</p>');
+    $circleContainer.append($circleImage);
+    $circleContainer.append($circleName);
+    $circleAppender.append($circleContainer);
+  });
 }
 
-//These click events and buttons to click will be unnecessary once the back end is configured.  The back end should
-//read/write the followed circles (groups) tied to the specific user from the database.  This is then updated every so often.
-//When a user clicks any of these circles, the map above will update to only show messages corresponding to that group(i.e. this is a quick filter function)
-
-// Add Circle Click Event
-
-var $addCircleButton = $('#addCircleButton');
-$addCircleButton.on('click', function(){
-  addCircle();
-});
-
-// Remove Circle Click Event
-
-var $removeCircleButton = $('#removeCircleButton');
-
-$removeCircleButton.on('click', function(){
-  $circleAppender.on('click', '.circleContainer', function(){
-    $(this).remove();
-    $circleAppender.off('click');
-  });
-});
 
 /////////////////////////////////////////////////////////
-/////////////////// User Uploads ////////////////////////////
+/////////////////// Create Circle ////////////////////////////
 ///////////////////////////////////////////////////////
 
+  ///////// Get Circle Avatar //////////
 
-///////// Create Circle Icon //////////
+  var $createCircleIconInput = $('.createCircleIcon');
+  var circleAvatar = [];
+  var circleAvatarOpts = {
+    // CSS Class to add to the drop element when a drag is active
+    dragClass: "draggingCircleAvatar",
 
-var circleIcon = document.getElementById('createCircleIcon');
-var circleIconDisplayArea = document.getElementById('circleDisplayArea');
-var preview = document.getElementById('preview');
+    // A string to match MIME types, for instance
+    accept: 'image/*',
+    readAsMap: { },
 
+    // How to read any files not specified by readAsMap
+    readAsDefault: 'DataURL',
+    on: {
+      beforestart: function(e, file) {
+          // return false if you want to skip this file
+      },
+      loadstart: function(e, file) { /* Native ProgressEvent */ },
+      progress: function(e, file) { /* Native ProgressEvent */ },
+      load: function(e, file) { /* Native ProgressEvent */ },
+      error: function(e, file) { /* Native ProgressEvent */ },
+      loadend: function(e, file) { 
+        var type = '';
+        var d = e.target.result;
+        var imgURI = d.replace("data:;","data:"+type+";")
+        saveCircleClick(imgURI);
+        var circleIconDisplayArea = document.getElementById('circleDisplayArea');
+        var img = new Image();
+        img.src = imgURI;
 
-circleIcon.addEventListener('change', function(e) {
-  var file = circleIcon.files[0];
-  var imageType = /image.*/;
+        circleIconDisplayArea.appendChild(img);
 
-  if (file.type.match(imageType)) {
-    var reader = new FileReader();
+        var imgPreview = new Image();
+        imgPreview.src = imgURI;
+        $('#preview').append(imgPreview);
+        $('#createCircleIcon').toggleClass('hidden');
 
-    reader.onload = function(e) {
-      circleIconDisplayArea.innerHTML = "";
+        //Create variables (in this scope) to hold the API and image size
+        var jcrop_api,
+            boundx,
+            boundy,
 
-      var img = new Image();
-      img.src = reader.result;
+            // Grab some information about the preview pane
+            $preview = $('.preview-container'),
+            $pcnt = $('.preview-container #preview'),
+            $pimg = $('.preview-container #preview img'),
 
-      circleIconDisplayArea.appendChild(img);
+            xsize = $pcnt.width(),
+            ysize = $pcnt.height();
 
-      var imgPreview = new Image();
-      imgPreview.src = reader.result;
-      $('#preview').append(imgPreview);
+        $(circleIconDisplayArea).Jcrop({
+          onChange: updatePreview,
+          onSelect: updatePreview,
+          aspectRatio: xsize / ysize
+        },function(){
+          // Use the API to get the real image size
+          var bounds = this.getBounds();
+          boundx = bounds[0];
+          boundy = bounds[1];
+          // Store the API in the jcrop_api variable
+          jcrop_api = this;
 
-      //Create variables (in this scope) to hold the API and image size
-      var jcrop_api,
-          boundx,
-          boundy,
+          // Move the preview into the jcrop container for css positioning
+          $preview.appendTo(jcrop_api.ui.holder);
+        });
 
-          // Grab some information about the preview pane
-          $preview = $('.preview-container'),
-          $pcnt = $('.preview-container #preview'),
-          $pimg = $('.preview-container #preview img'),
-
-          xsize = $pcnt.width(),
-          ysize = $pcnt.height();
-
-      console.log('init',[xsize,ysize]);
-      $(circleIconDisplayArea).Jcrop({
-        onChange: updatePreview,
-        onSelect: updatePreview,
-        aspectRatio: xsize / ysize
-      },function(){
-        // Use the API to get the real image size
-        var bounds = this.getBounds();
-        boundx = bounds[0];
-        boundy = bounds[1];
-        // Store the API in the jcrop_api variable
-        jcrop_api = this;
-
-        // Move the preview into the jcrop container for css positioning
-        $preview.appendTo(jcrop_api.ui.holder);
-      });
-
-      function updatePreview(c)
-      {
-        if (parseInt(c.w) > 0)
+        function updatePreview(c)
         {
-          var rx = xsize / c.w;
-          var ry = ysize / c.h;
+          if (parseInt(c.w) > 0)
+          {
+            var rx = xsize / c.w;
+            var ry = ysize / c.h;
 
-          $pimg.css({
-            width: Math.round(rx * boundx) + 'px',
-            height: Math.round(ry * boundy) + 'px',
-            marginLeft: '-' + Math.round(rx * c.x) + 'px',
-            marginTop: '-' + Math.round(ry * c.y) + 'px'
-          });
-        }
-      };
+            $pimg.css({
+              width: Math.round(rx * boundx) + 'px',
+              height: Math.round(ry * boundy) + 'px',
+              marginLeft: '-' + Math.round(rx * c.x) + 'px',
+              marginTop: '-' + Math.round(ry * c.y) + 'px'
+            });
+          }
+        };
 
-      $(circleIcon).css('display', 'none');
-      $(circleIconDisplayArea).css('border', '2px solid white');
-      $('.createCircleInputs').css('margin-top', '200px');
-      $('.preview-container').css('display', 'block');
+        $('.createCircleInputs').css('margin-top', '200px');
+        $('.preview-container').css('display', 'block');
+        },
+        abort: function(e, file) { /* Native ProgressEvent */ },
+        skip: function(e, file) {
+          // Called when a file is skipped.  This happens when:
+          //  1) A file doesn't match the accept option
+          //  2) false is returned in the beforestart callback
+      }
     }
+  }
+  $('#createCircleIcon').fileReaderJS(circleAvatarOpts);
 
-    reader.readAsDataURL(file);
+
+// Create Circle Object
+
+function createCircleObject(circleAvatarObj){
+  var circleName = $('#createCircleName').val();
+  var circleDescription = $('#createCircleDescription').val();
+  var circleObj = {'avatar': circleAvatarObj, 'name': circleName, 'description': circleDescription, 'owner': fb.getAuth().uid}
+  return circleObj;
+}
+
+function saveCircleObject(circleObject){
+  var uid = fb.getAuth().uid;
+  var circleUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/data/circles/owned');
+  circleUrl.push(circleObject);
+}
+
+function saveCircleClick(img){
+    $('.submitCreateCircleButton').click(function(){
+      var avtImg = img;
+      var avtMarginLeft = $('.preview-container #preview img').css('margin-left');
+      var avtMarginTop = $('.preview-container #preview img').css('margin-top');
+      var avtImgWidth = $('.preview-container #preview img').css('width');
+      var avatar = {'url':avtImg,'width':avtImgWidth,'marginLeft':avtMarginLeft,'marginTop':avtMarginTop}
+      var circle = createCircleObject(avatar);
+      saveCircleObject(circle);
+    });
   }
 
-  else {
-    circleIconDisplayArea.innerHTML = "File not supported!"
-  }
-});
+function fbGetCircles(subscriptionType, callback){
+  var uid = fb.getAuth().uid;
+  var fbCirclesURL = new Firebase(FIREBASE_URL+'/users/'+uid+'/data/circles/'+subscriptionType);
+  fbCirclesURL.once('value', function(subscKey){
+      var circles = subscKey.val();
+        _.forEach(circles,function(circle){
+          var id = (_.keys(circle))[0];
+          var circleObj = {'avatar': circle.avatar, 'name': circle.name, 'description': circle.description, 'owner': circle.owner, 'id': id};
+          callback(circleObj);
+      });
+  });
+}
+
+
+
+/////////////////////////////////////////////////////////
+/////////////////// Chat Functions /////////////////////////
+/////////////////////////////////////////////////////////
+
+function appendChatContainer(messages){
+  var $chatContainer = $('.chat-container');
+  _.forEach(messages, function(message){
+    var $messageContainer = $('<div class="messageContainer"><p class="chatContainerMessage">'+message+'</p></div>');
+    $chatContainer.append($messageContainer);
+  });
+}
 
 
 

@@ -14,9 +14,16 @@
   z-index: 200;
   margin-left: -($iconSize/2);
   margin-top: -($iconSize/2);
-  opacity: 0.8;
-  text-align: center;
+  opacity: 1;
   overflow: auto;
+}
+
+.iconInfoHolder {
+  width: 70%;
+  display: inline-block;
+  position: absolute;
+  text-align: center;
+  padding: 0;
 }
 
 .iconTitle, .iconText, .iconExpiration {
@@ -34,6 +41,21 @@
 
 .iconExpiration {
   margin-top: -5px;
+}
+
+.iconPic {
+  width: $iconSize;
+  height: $iconSize;
+  border-radius: $iconSize;
+  border: 1px solid black;
+  display: inline-block;
+
+  .iconPicImage {
+    width: $iconSize;
+    height: $iconSize;
+    border-radius: $iconSize;
+    display: inline-block;
+  }
 }
 
 
