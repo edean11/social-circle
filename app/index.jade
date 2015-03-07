@@ -185,7 +185,12 @@ html(lang="en-US")
         .castAddInfoContainer
         .footerCircle-container
           .timeCircle-container
-      .chat-container
+      .chat-container.hidden
+        .chatContainerHeader
+          .chatContainerTitle
+          .chatContainerText
+        .chatContainerMessages
+        input(type="text").chatContainerReply
 
     script(src="vendor/jquery/dist/jquery.min.js")
     script(src="vendor/firebase/firebase.js")

@@ -280,7 +280,7 @@ function createCastInfo(position, userImg){
 
   var castInfo =  {'title': $castTitle.val(), 'text': $castMessageText.val(),
                   'expiration': $expirationDate.val(), 'attachments': $castAttachment.val(),
-                  'groups': $castGroups, 'position': $position, 'image': userImg, 'id': ''};
+                  'groups': $castGroups, 'position': $position, 'image': userImg, 'id': '', 'messages': [], 'owner': fb.getAuth().uid};
 
   return castInfo;
 }
@@ -293,10 +293,12 @@ function fbCreateCastInfo(cast){
   var position = cast.position;
   var castPic = cast.image;
   var castId = cast.id;
+  console.log(cast.id);
+  var castMessages = cast.messages;
 
   var castInfo =  {'title': castTitle, 'text': castMessageText,
                   'expiration': expirationDate, 'attachments': castAttachments,
-                  'groups': castGroups, 'position': position, 'image': castPic, 'id': castId}
+                  'groups': castGroups, 'position': position, 'image': castPic, 'id': castId, 'messages': castMessages, 'owner': cast.owner}
 
   return castInfo;
 }
@@ -323,11 +325,10 @@ function getAndSetMyCastMarkers(){
   myCastsUrl.once('value', function(res){
       var casts = res.val();
       _.forEach(casts, function(cast){
-        var key = (_.keys(cast))[0];
         var lat = cast.position.k;
         var lng = cast.position.D;
         var castObj = fbCreateCastInfo(cast);
-        setMarker(lat,lng,false, castObj, key);
+        setMarker(lat,lng,false, castObj, cast.id);
       });
   })
 }
@@ -342,16 +343,18 @@ function setMarker(lat, longt, drag, castInfoObj, id) {
       position: position,
       map: map,
       draggable: drag,
-      content: createCircleIcon(iconCounter, castInfo),
+      content: createCircleIcon(id, castInfo),
       title: castInfo.title,
       zIndex: iconCounter+1,
       id: id
   });
+  console.log(id);
 
   marker.set('id', id);
   google.maps.event.addListener(marker, 'click', function(event){
     iconWidthChange(this);
     refreshExpirationStyles();
+    fbGetAndAppendChat(castInfo.owner,id);
     // insert chat container change function here
   });
   iconCounter++;
@@ -362,17 +365,20 @@ function setMarker(lat, longt, drag, castInfoObj, id) {
 function iconWidthChange(that) {
   if($('.'+that.id+'icon').width()===40){
     $('.'+that.id+'icon').width('180px');
-    //$('.'+that.id+'icon').css('padding-left', '8px');
     $('.'+that.id+'iconTitle').css('display', 'block');
     $('.'+that.id+'iconText').css('display', 'inline-block');
     timeCirclesCreate(that);
+    $('.chat-container').toggleClass('hidden');
+    $('.timeCircle-container').toggleClass('hidden');
+    console.log($('.chat-container'))
   } else {
     $('.'+that.id+'icon').width('40px');
-    //$('.'+that.id+'icon').css('padding-left', '0px');
     $('.'+that.id+'iconTitle').css('display', 'none');
     $('.'+that.id+'iconText').css('display', 'none');
     var $timeCircleContainer = $('.timeCircle-container');
     $timeCircleContainer.empty();
+    $('.chat-container').toggleClass('hidden');
+    $('.timeCircle-container').toggleClass('hidden');
   }
 }
 
@@ -519,8 +525,8 @@ function showPosition(position) {
   var lng = position.coords.longitude;
   var position = new google.maps.LatLng(lat, lng);
   var castInfo = createCastInfo(position);
-  setMarker(lat,lng, false, castInfo);
-  saveCastInfo(castInfo);
+  var id = saveCastInfo(castInfo);
+  setMarker(lat,lng, false, castInfo, id);
   map.setCenter(new google.maps.LatLng(lat, lng));
 }
 
@@ -790,13 +796,45 @@ function fbGetCircles(subscriptionType, callback){
 /////////////////// Chat Functions /////////////////////////
 /////////////////////////////////////////////////////////
 
-function appendChatContainer(messages){
-  var $chatContainer = $('.chat-container');
+//// Create Chat Container ////
+
+function toggleChatContainerClickEvent(){
+  $('footer-container').toggleClass('hidden');
+  $('chat-container').toggleClass('hidden');
+}
+
+function appendChatContainerMessages(messages){
+  var $chatContainerMessages = $('.chatContainerMessages');
   _.forEach(messages, function(message){
     var $messageContainer = $('<div class="messageContainer"><p class="chatContainerMessage">'+message+'</p></div>');
-    $chatContainer.append($messageContainer);
+    $chatContainerMessages.append($messageContainer);
   });
 }
+
+function appendChatContainerTitle(title,text){
+  var $chatContainerTitle = $('.chatContainerTitle');
+  var $title = $('<p class="chatContainerTitle">'+title+'</p>');
+  var $chatContainerText = $('.chatContainerText');
+  var $text = $('<p class="chatContainerText">'+text+'</p>');
+  $chatContainerTitle.append($title);
+  $chatContainerText.append($text);
+}
+
+//// Get and Append Chat Messages
+
+function fbGetAndAppendChat(owner,id){
+  var url = new Firebase(FIREBASE_URL+'/users/'+owner+'/data/casts/'+id+'/');
+  url.once('value',function(res){
+    var val = res.val();
+    appendChatContainerTitle(val.title,val.text);
+    appendChatContainerMessages(val.messages);
+  });
+}
+
+//// Save Chat Messages ////
+
+
+
 
 
 

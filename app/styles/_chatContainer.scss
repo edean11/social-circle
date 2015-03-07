@@ -1,0 +1,37 @@
+.chatContainerReply {
+	width: 90%;
+	position: fixed;
+	bottom: -10px;
+	z-index: 10000;
+	border: 3px solid black !important;
+	background-color: $background-black !important;
+	color: white;
+	opacity: 0.9;
+}
+
+.chat-container {
+	width: 90%;
+	margin: 10px auto;
+	margin-bottom: 70px;
+	border: 2px solid black;
+	border-radius: 10px;
+}
+
+.chatContainerHeader {
+	text-align: center;
+	.chatContainerTitle {
+		margin: 0;
+		background-color: steelblue;
+		border-radius: 10px 10px 0 0;
+		border-bottom: 1px solid black;
+	}
+	.chatContainerText {
+		margin: 0;
+		background-color: $background-grey;
+		border-bottom: 1px solid black;
+	}
+}
+
+.chatContainerMessages {
+	height: 50px;
+}
