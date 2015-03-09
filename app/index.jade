@@ -116,17 +116,19 @@ html(lang="en-US")
             .searchcircle-container
               h5 Search Circles
               input(type="text")#searchCircleInput
+              button.submitSearchCirclesButton.submitButton.
+                    Search
             .searchuser-container
               h5 Search Users
               input(type="text")#searchUserInput
+              button.submitSearchUsersButton.submitButton.
+                    Search
+            .searchresults-container.hidden
             .search-bottom
               .row
-                .six.columns
+                .twelve.columns
                   button.defaultSearchButton.
-                    Default
-                .six.columns
-                  button.submitSearchButton.submitButton.
-                    Search
+                    Cancel
 
           .createCircleOverlay
             .createcircle-top

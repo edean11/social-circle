@@ -114,6 +114,48 @@
 				}
 			}
 		}
+
+    .searchresults-container {
+
+      .searchResultContainer {
+        border: 3px solid $background-black;
+        border-radius: 10px;
+        width: 350px;
+        margin-bottom: 20px;
+
+        .searchResultsImg {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          border: 2px solid black;
+          display: inline-block;
+          margin-left: -50px;
+          margin-top: 20px;
+        }
+
+        .searchResultsInfoContainer {
+          display: inline-block;
+          width: 150px;
+
+          p {
+            margin: 4px;
+          }
+
+        }
+
+        .searchResultsButtonContainer {
+          display: inline-block;
+          margin-bottom: auto;
+
+          button {
+            width: 80px;
+            font-size: 0.3em;
+            padding: 0;
+            margin: 5px;
+          }
+        }
+      }
+    }
 	}
 
 	.createCircleOverlay {

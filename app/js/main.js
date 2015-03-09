@@ -790,7 +790,77 @@ function fbGetCircles(subscriptionType, callback){
   });
 }
 
+///////////////////////////////////////////////////////////
+/////////////// Search and Filter Functions ////////////////
+//////////////////////////////////////////////////////////
 
+$('.submitSearchCirclesButton').click(function(){
+  var searchValue = $('#searchCircleInput').val();
+    $('.searchuser-container').toggleClass('hidden');
+    $('.searchcircle-container').toggleClass('hidden');
+    $('.searchresults-container').toggleClass('hidden');
+  searchCircles(function(val){
+    console.log(val);
+    checkAndAppendSearchCriteria(val,searchValue);
+  });
+});
+
+function searchCircles(callback){
+  var url = new Firebase(FIREBASE_URL+'/users/');
+  url.once('value', function(users){
+    var circles = [];
+    var usersVal = _.keys(users.val());
+    console.log(usersVal);
+    _.forEach(usersVal, function(user){
+      console.log(user);
+      var circleUrl = new Firebase(FIREBASE_URL+'/users/'+user+'/data/circles/owned/');
+      circleUrl.once('value',function(ownedCircles){
+        var ownedCirclesVal = ownedCircles.val();
+        var OCKeys = _.keys(ownedCirclesVal);
+        _.forEach(OCKeys, function(key){
+          var finalUrl = new Firebase(FIREBASE_URL+'/users/'+user+'/data/circles/owned/'+key+'/');
+          finalUrl.once('value',function(foundCircle){
+            var val = foundCircle.val();
+            callback(val);
+          });
+        });
+      });
+    });
+  });
+}
+
+function checkAndAppendSearchCriteria(circle, searchText){
+  var circleName = circle.name;
+  var circleDescription = circle.description;
+  var circleOwner = circle.owner;
+  console.log('name',circleName);
+  console.log('search',searchText);
+  if (circleName.toLowerCase().indexOf(searchText.toLowerCase()) >= 0 ||
+      circleDescription.toLowerCase().indexOf(searchText.toLowerCase()) ||
+      circleOwner.toLowerCase().indexOf(searchText.toLowerCase())){
+    appendSearchResults(circle);
+  console.log(circleName.toLowerCase());
+  console.log(searchText.toLowerCase());
+  } else {}
+}
+
+function appendSearchResults(circle){
+  var circleAvatar = $('<img class="searchResultsImg" src="'+circle.avatar.url+'"></img>');
+  var circleName = $('<p class="searchResultsName">'+circle.name+'</p>');
+  var circleDescription = $('<p class="searchResultsDescription">'+circle.description+'</p>');
+  var circleOwner = $('<p class="searchResultsOwner">'+circle.owner+'</p>');
+  var searchInfoContainer = $('<div class="searchResultsInfoContainer"></div>');
+  var searchResultContainer = $('<div class="searchResultContainer"></div>');
+  var searchButtons = $('<div class="searchResultsButtonContainer"><button class="searchResultsFilter">Filter</button><button class="searchResultsSubscribe">Subscribe</button></div>');
+  searchResultContainer.append(circleAvatar);
+  searchInfoContainer.append(circleName);
+  searchInfoContainer.append(circleDescription);
+  searchInfoContainer.append(circleOwner);
+  searchResultContainer.append(searchInfoContainer);
+  searchResultContainer.append(searchButtons);
+
+  $('.searchresults-container').append(searchResultContainer);
+}
 
 /////////////////////////////////////////////////////////
 /////////////////// Chat Functions /////////////////////////
