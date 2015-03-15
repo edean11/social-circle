@@ -108,7 +108,7 @@ html(lang="en-US")
               .row
                 .six.columns
                   button.resetCastInfo.
-                    Cancel 
+                    Cancel
                 .six.columns
                   button.submitCastInfo.submitButton.
                     Broadcast
@@ -116,18 +116,18 @@ html(lang="en-US")
             .searchcircle-container
               h5 Search Circles
               input(type="text")#searchCircleInput
-              button.submitSearchCirclesButton.submitButton.
+              button.submitSearchCirclesButton.submitSearchButton.
                     Search
             .searchuser-container
               h5 Search Users
               input(type="text")#searchUserInput
-              button.submitSearchUsersButton.submitButton.
+              button.submitSearchUsersButton.submitSearchButton.
                     Search
             .searchresults-container.hidden
             .search-bottom
               .row
                 .twelve.columns
-                  button.defaultSearchButton.
+                  button.cancelSearchButton.
                     Cancel
 
           .createCircleOverlay
@@ -187,12 +187,16 @@ html(lang="en-US")
         .castAddInfoContainer
         .footerCircle-container
           .timeCircle-container
+          .subscribeCircle-container
       .chat-container.hidden
         .chatContainerHeader
           .chatContainerTitle
           .chatContainerText
         .chatContainerMessages
-        input(type="text").chatContainerReply
+        .chatContainerReplyContainer
+          input(type="text").chatContainerReply
+          button.chatContainerReplyButton.
+            Post
 
     script(src="vendor/jquery/dist/jquery.min.js")
     script(src="vendor/firebase/firebase.js")

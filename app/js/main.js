@@ -71,6 +71,7 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
       $('.container').toggleClass('hidden');
       getAndSetMyCastMarkers();
       addCircles(addCircleIncrement, 'owned');
+      addCircles(addCircleIncrement, 'subscribed');
     } else if (fb.getAuth()) {
       $('.login').toggleClass('hidden');
       $('.loggedIn').toggleClass('hidden');
@@ -232,7 +233,7 @@ var FIREBASE_URL = 'https://social-circle.firebaseio.com/',
 // DOM Element Grab
 
 var $footer = $('.footer-container');
-var $circleAppender = $('.footerCircle-container');
+var $circleAppender = $('.subscribeCircle-container');
 var $castMessageButton = $('#castMessageButton');
 var $searchButton = $('#searchButton');
 var $createCircleButton = $('#createCircleButton');
@@ -293,7 +294,6 @@ function fbCreateCastInfo(cast){
   var position = cast.position;
   var castPic = cast.image;
   var castId = cast.id;
-  console.log(cast.id);
   var castMessages = cast.messages;
 
   var castInfo =  {'title': castTitle, 'text': castMessageText,
@@ -333,7 +333,7 @@ function getAndSetMyCastMarkers(){
   })
 }
 
-//Set the cast onto the google maps object, add the width change listener to it
+//Set the cast onto the google maps object, add the width change listener events to it
 function setMarker(lat, longt, drag, castInfoObj, id) {
 
   var position = new google.maps.LatLng(lat, longt);
@@ -348,13 +348,13 @@ function setMarker(lat, longt, drag, castInfoObj, id) {
       zIndex: iconCounter+1,
       id: id
   });
-  console.log(id);
 
   marker.set('id', id);
   google.maps.event.addListener(marker, 'click', function(event){
     iconWidthChange(this);
+    turnOnMessageListener(id,castInfo.owner)
     refreshExpirationStyles();
-    fbGetAndAppendChat(castInfo.owner,id);
+    // fbGetAndAppendChat(castInfo.owner,id);
     // insert chat container change function here
   });
   iconCounter++;
@@ -369,16 +369,16 @@ function iconWidthChange(that) {
     $('.'+that.id+'iconText').css('display', 'inline-block');
     timeCirclesCreate(that);
     $('.chat-container').toggleClass('hidden');
-    $('.timeCircle-container').toggleClass('hidden');
-    console.log($('.chat-container'))
+    $('.subscribeCircle-container').toggleClass('hidden');
   } else {
     $('.'+that.id+'icon').width('40px');
     $('.'+that.id+'iconTitle').css('display', 'none');
     $('.'+that.id+'iconText').css('display', 'none');
     var $timeCircleContainer = $('.timeCircle-container');
     $timeCircleContainer.empty();
+    $('.chat-container').attr('data-uid','');
     $('.chat-container').toggleClass('hidden');
-    $('.timeCircle-container').toggleClass('hidden');
+    $('.subscribeCircle-container').toggleClass('hidden');
   }
 }
 
@@ -453,6 +453,10 @@ function clearCastMessage(){
   editOverlaySelect.css('border', 'none');
   editOverlaySelect.css('height', 0);
   $castMessageButton.css('z-index', '3');
+}
+
+function clearForm(container){
+  $(container).find('input[type="text"]').val('');
 }
 
 
@@ -565,7 +569,7 @@ $searchButton.on("click", function(){
     searchOverlay.css('display', 'inline-block');
     $searchButton.css('z-index', '10');
 
-    $('.submitSearchButton').click(function(){
+    $('.cancelSearchButton').click(function(){
       searchOverlay.css('display', 'none');
       editOverlaySelect.css('border', 'none');
       editOverlaySelect.css('height', 0);
@@ -761,8 +765,10 @@ function createCircleObject(circleAvatarObj){
 
 function saveCircleObject(circleObject){
   var uid = fb.getAuth().uid;
-  var circleUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/data/circles/owned');
-  circleUrl.push(circleObject);
+  var myCircleUrl = new Firebase(FIREBASE_URL+'/users/'+uid+'/data/circles/owned');
+  var allCircleUrl = new Firebase(FIREBASE_URL+'/circles/');
+  myCircleUrl.push(circleObject);
+  allCircleUrl.push(circleObject);
 }
 
 function saveCircleClick(img){
@@ -796,71 +802,102 @@ function fbGetCircles(subscriptionType, callback){
 
 $('.submitSearchCirclesButton').click(function(){
   var searchValue = $('#searchCircleInput').val();
-    $('.searchuser-container').toggleClass('hidden');
-    $('.searchcircle-container').toggleClass('hidden');
-    $('.searchresults-container').toggleClass('hidden');
-  searchCircles(function(val){
-    console.log(val);
-    checkAndAppendSearchCriteria(val,searchValue);
+  searchCircles(function(val,key){
+    checkAndAppendSearchCriteria(val,key,searchValue);
+    saveSubscribedCircleClick();
   });
 });
 
+$('.submitSearchButton').click(function(){
+  toggleSearchResults();
+});
+
+function toggleSearchResults(){
+  $('.searchuser-container').toggleClass('hidden');
+  $('.searchcircle-container').toggleClass('hidden');
+  $('.searchresults-container').toggleClass('hidden');
+}
+
+function resetSearchResults(){
+  var editOverlaySelect = $('.editOverlay');
+  var searchOverlay = $('.searchOverlay');
+  var $searchButton = $('#searchButton');
+  //toggleSearchResults();
+  searchOverlay.css('display', 'none');
+  editOverlaySelect.css('border', 'none');
+  editOverlaySelect.css('height', 0);
+  $searchButton.css('z-index', '3');
+  ('#searchCircleInput').val = '';
+  ('#searchUserInput').val = '';
+}
+
 function searchCircles(callback){
-  var url = new Firebase(FIREBASE_URL+'/users/');
-  url.once('value', function(users){
-    var circles = [];
-    var usersVal = _.keys(users.val());
-    console.log(usersVal);
-    _.forEach(usersVal, function(user){
-      console.log(user);
-      var circleUrl = new Firebase(FIREBASE_URL+'/users/'+user+'/data/circles/owned/');
-      circleUrl.once('value',function(ownedCircles){
-        var ownedCirclesVal = ownedCircles.val();
-        var OCKeys = _.keys(ownedCirclesVal);
-        _.forEach(OCKeys, function(key){
-          var finalUrl = new Firebase(FIREBASE_URL+'/users/'+user+'/data/circles/owned/'+key+'/');
-          finalUrl.once('value',function(foundCircle){
-            var val = foundCircle.val();
-            callback(val);
-          });
-        });
+  var url = new Firebase(FIREBASE_URL+'/circles/');
+  url.once('value', function(circles){
+    var circlesVal = _.keys(circles.val());
+    _.forEach(circlesVal, function(key){
+      var circleUrl = new Firebase(FIREBASE_URL+'/circles/'+key+'/');
+      circleUrl.once('value',function(circle){
+        var val = circle.val();
+        callback(val,key)
       });
     });
   });
 }
 
-function checkAndAppendSearchCriteria(circle, searchText){
+function checkAndAppendSearchCriteria(circle, key, searchText){
   var circleName = circle.name;
   var circleDescription = circle.description;
   var circleOwner = circle.owner;
-  console.log('name',circleName);
-  console.log('search',searchText);
   if (circleName.toLowerCase().indexOf(searchText.toLowerCase()) >= 0 ||
-      circleDescription.toLowerCase().indexOf(searchText.toLowerCase()) ||
-      circleOwner.toLowerCase().indexOf(searchText.toLowerCase())){
-    appendSearchResults(circle);
-  console.log(circleName.toLowerCase());
-  console.log(searchText.toLowerCase());
+      circleDescription.toLowerCase().indexOf(searchText.toLowerCase()) >= 0||
+      circleOwner.toLowerCase().indexOf(searchText.toLowerCase()) >= 0){
+    appendSearchResults(circle, key);
   } else {}
 }
 
-function appendSearchResults(circle){
+function appendSearchResults(circle, key){
   var circleAvatar = $('<img class="searchResultsImg" src="'+circle.avatar.url+'"></img>');
   var circleName = $('<p class="searchResultsName">'+circle.name+'</p>');
   var circleDescription = $('<p class="searchResultsDescription">'+circle.description+'</p>');
   var circleOwner = $('<p class="searchResultsOwner">'+circle.owner+'</p>');
   var searchInfoContainer = $('<div class="searchResultsInfoContainer"></div>');
-  var searchResultContainer = $('<div class="searchResultContainer"></div>');
-  var searchButtons = $('<div class="searchResultsButtonContainer"><button class="searchResultsFilter">Filter</button><button class="searchResultsSubscribe">Subscribe</button></div>');
+  var searchResultContainer = $('<div class="searchResultContainer" data-uid="'+key+'"></div>');
+  var searchButtons = $('<div class="searchResultsButtonContainer" data-uid="'+key+'"><button class="'+key+'searchResultsFilter searchResultsFilter">Filter</button><button class="searchResultsSubscribe">Subscribe</button></div>');
   searchResultContainer.append(circleAvatar);
   searchInfoContainer.append(circleName);
   searchInfoContainer.append(circleDescription);
   searchInfoContainer.append(circleOwner);
   searchResultContainer.append(searchInfoContainer);
   searchResultContainer.append(searchButtons);
-
   $('.searchresults-container').append(searchResultContainer);
 }
+
+function saveSubscribedCircleClick(){
+  if($('.searchResultsSubscribe').context.onclick === null){
+    $('.searchResultsSubscribe').click(function(){
+      var uuid = $(this).closest('.searchResultContainer').attr('data-uid');
+      if($(this).context.disabled===false){
+        searchCircles(function(val,key){
+          if(uuid===key){
+            var user = fb.getAuth().uid;
+            var pushUrl = new Firebase(FIREBASE_URL+'/users/'+user+'/data/circles/subscribed/');
+            val.uuid = key;
+            pushUrl.push(val);
+            resetSearchResults();
+            addCircles(addCircleIncrement,'subscribed');
+          }
+        });
+      }
+    });
+  }else{}
+}
+
+$('.cancelSearchButton').click(function(){
+  clearForm('.searchOverlay');
+  toggleSearchResults();
+})
+
 
 /////////////////////////////////////////////////////////
 /////////////////// Chat Functions /////////////////////////
@@ -868,24 +905,32 @@ function appendSearchResults(circle){
 
 //// Create Chat Container ////
 
-function toggleChatContainerClickEvent(){
-  $('footer-container').toggleClass('hidden');
-  $('chat-container').toggleClass('hidden');
-}
-
 function appendChatContainerMessages(messages){
   var $chatContainerMessages = $('.chatContainerMessages');
+  $chatContainerMessages.empty();
+  var $mContainer = $('<div class="messageContainer"></div>');
   _.forEach(messages, function(message){
-    var $messageContainer = $('<div class="messageContainer"><p class="chatContainerMessage">'+message+'</p></div>');
-    $chatContainerMessages.append($messageContainer);
+    var $message = $('<p class="chatContainerMessageOwner">'+message.author+'</p><p class="chatContainerMessage">'+message.message+'</p>');
+    $mContainer.append($message);
+    $chatContainerMessages.append($mContainer);
   });
+}
+
+function appendSingleMessage(message){
+  var $chatContainerMessages = $('.chatContainerMessages');
+  var $mContainer = $('<div class="messageContainer"></div>');
+  var $message = $('<p class="chatContainerMessageOwner">'+message.author+'</p><p class="chatContainerMessage">'+message.message+'</p>');
+  $mContainer.append($message);
+  $chatContainerMessages.append($mContainer);
 }
 
 function appendChatContainerTitle(title,text){
   var $chatContainerTitle = $('.chatContainerTitle');
-  var $title = $('<p class="chatContainerTitle">'+title+'</p>');
   var $chatContainerText = $('.chatContainerText');
-  var $text = $('<p class="chatContainerText">'+text+'</p>');
+  $chatContainerTitle.empty();
+  $chatContainerText.empty();
+  var $title = $('<p class="chatContainerTitleText">'+title+'</p>');
+  var $text = $('<p class="chatContainerDescText">'+text+'</p>');
   $chatContainerTitle.append($title);
   $chatContainerText.append($text);
 }
@@ -896,12 +941,46 @@ function fbGetAndAppendChat(owner,id){
   var url = new Firebase(FIREBASE_URL+'/users/'+owner+'/data/casts/'+id+'/');
   url.once('value',function(res){
     var val = res.val();
+    $('.chat-container').attr('data-uid',id);
     appendChatContainerTitle(val.title,val.text);
     appendChatContainerMessages(val.messages);
   });
 }
 
-//// Save Chat Messages ////
+//// Save Chat Messages On Click////
+
+$('.chatContainerReplyButton').click(function(){
+  var user = fb.getAuth().uid;
+  var uid = $(this).closest('.chat-container').attr('data-uid');
+  var url = new Firebase(FIREBASE_URL+'/users/'+user+'/data/casts/'+uid+'/messages/');
+  var message = $('.chatContainerReply').val();
+  var messageObj = {'message': message,'author':fb.getAuth().uid}
+  url.push(messageObj);
+  $('.chatContainerReply').val('');
+})
+
+//Turn on Message Listener
+
+function turnOnMessageListener(id,owner){
+  var url = new Firebase(FIREBASE_URL+'/users/'+owner+'/data/casts/'+id+'/messages/');
+  url.on('child_added',function(childSnap,prevChildName){
+    var val = childSnap.val();
+    $('.chat-container').attr('data-uid',id);
+    appendSingleMessage(val);
+  });
+}
+
+function appendOwnerTextMessage(id,owner){
+  var url = new Firebase(FIREBASE_URL+'/users/'+owner+'/data/casts/'+id+'/');
+  url.once('value',function(res){
+    var val = res.val();
+    var $chatContainerMessages = $('.chatContainerMessages');
+    var $mContainer = $('<div class="messageContainer"></div>');
+    var $message = $('<p class="chatContainerMessageOwner">'+val.owner+'</p><p class="chatContainerMessage">'+val.text+'</p>');
+    $mContainer.append($message);
+    $chatContainerMessages.append($mContainer);
+  })
+}
 
 
 

@@ -1,12 +1,18 @@
-.chatContainerReply {
-	width: 90%;
+.chatContainerReplyContainer{
 	position: fixed;
+	width: 90%;
 	bottom: -10px;
 	z-index: 10000;
 	border: 3px solid black !important;
 	background-color: $background-black !important;
-	color: white;
 	opacity: 0.9;
+	.chatContainerReply {
+		width: 74%;
+	}
+	.chatContainerReplyButton{
+		width: 24%;
+		background-color: limegreen;
+	}
 }
 
 .chat-container {
@@ -19,13 +25,13 @@
 
 .chatContainerHeader {
 	text-align: center;
-	.chatContainerTitle {
+	.chatContainerTitleText {
 		margin: 0;
 		background-color: steelblue;
 		border-radius: 10px 10px 0 0;
 		border-bottom: 1px solid black;
 	}
-	.chatContainerText {
+	.chatContainerDescText {
 		margin: 0;
 		background-color: $background-grey;
 		border-bottom: 1px solid black;
@@ -33,5 +39,23 @@
 }
 
 .chatContainerMessages {
-	height: 50px;
+	padding: 10px;
+	background-color: $background-grey;
+
+	.messageContainer {
+		background-color: white;
+		border-radius: 10px;
+		border: 2px solid black;
+		padding: 5px 15px;
+		margin: 10px 0;
+		width: 80%;
+
+		&:nth-child(2n) {
+			background-color: $background-black;
+			color: white;
+			border: 2px solid white;
+			margin-left: auto;
+			margin-right: 0;
+		}
+	}
 }
